@@ -11,8 +11,8 @@
 {% endblock %}
 
 {% block container %}
-  <h1 class="mt-5">{% translate "Sign in" %}</h1>
-  <form id="signup-form" class="mt-5" method="POST">
+  <h1>{% translate "Sign in" %}</h1>
+  <form id="signup-form" method="POST">
     {% csrf_token %}
     {% for field in signin_form %}
       <div class="form-group">

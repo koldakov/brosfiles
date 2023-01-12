@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block container %}
-  <form id="file-download-form" class="mt-5" method="POST" enctype="multipart/form-data">
+  <form id="file-download-form" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     <input type="hidden" value="{{ file.url_path }}" name="url_path"/>
     <div class="mb-3">

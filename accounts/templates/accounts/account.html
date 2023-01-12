@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block container %}
-  <form id="file-upload-form" class="mt-5" method="POST" enctype="multipart/form-data">
+  <form id="file-upload-form" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     {% for field in file_upload_form %}
       <div class="mb-3">
