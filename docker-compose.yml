@@ -1,0 +1,10 @@
+version: "3.3"
+
+services:
+  brosfiles:
+    container_name: brosfiles
+    build:
+      context: .
+    command: bash entrypoint.sh
+    ports:
+      - "8080:8080"

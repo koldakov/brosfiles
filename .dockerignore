@@ -1,0 +1,22 @@
+.git
+.gitignore
+
+# Python pycache:
+__pycache__/
+# Ignored by the build system
+/setup.cfg
+
+# Environment
+.venv/
+.env.dev
+.env.template
+
+# Static files
+/static/
+/media/
+
+# IDE
+.idea
+
+# Templates
+*.template
