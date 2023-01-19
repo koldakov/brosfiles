@@ -48,3 +48,7 @@ To run unit tests:
 ## Migrations
 
 For migrations, add `BF_ADMIN_USERNAME` and `BF_ADMIN_PASSWORD` to virtual environment to create admin user.
+
+## Visitor counter
+
+<img src="https://profile-counter.glitch.me/aivgithub/count.svg" />
