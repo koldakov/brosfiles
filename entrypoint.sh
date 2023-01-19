@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 UWSGI_EXTRA=""
 
 if [ -z "${PORT}" ]
