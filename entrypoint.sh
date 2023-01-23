@@ -28,6 +28,8 @@ then
   fi
 fi
 
+python manage.py migrate
+
 echo "Starting service on port $PORT"
 echo "To change port set port to PORT virtual environment variable"
 uwsgi --http :$PORT --ini configurations/server.ini $UWSGI_EXTRA

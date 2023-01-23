@@ -50,7 +50,6 @@ USER ${APP_USER}:${APP_USER}
 
 # Prepare project for the start
 RUN python ${WORK_DIR}/manage.py collectstatic --noinput
-RUN python ${WORK_DIR}/manage.py migrate
 
 # Main launch command
 CMD ["./entrypoint.sh"]
