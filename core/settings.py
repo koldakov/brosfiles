@@ -21,58 +21,22 @@ from google.cloud import secretmanager
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-PROJECT_NAME = 'bros files'
-_PROJECT_NAME = ''.join(PROJECT_NAME.split())
-
 ENV = environ.Env()
 
-ENV_FILE_NAME = ENV.get_value('BF_ENV_NAME', default='.env')
-ENV_FILE_PATH = BASE_DIR / str(ENV_FILE_NAME)
-
-
-# Local environ from ENV_FILE_PATH
-if Path(ENV_FILE_PATH).exists():
-    ENV.read_env(ENV_FILE_PATH)
-
+PROJECT_NAME = str(ENV.get_value('BF_PROJECT_NAME', default='bros files'))
+_PROJECT_NAME = ''.join(PROJECT_NAME.split())
 
 # Google
 GOOGLE_CLOUD_PROJECT = ENV.get_value('GOOGLE_CLOUD_PROJECT', default=None)
-TRAMPOLINE_CI = ENV.get_value('TRAMPOLINE_CI', default=None)
-GOOGLE_APPLICATION_CREDENTIALS_NAME = ENV.get_value('GOOGLE_APPLICATION_CREDENTIALS')
-GOOGLE_APPLICATION_CREDENTIALS_FILE = BASE_DIR / str(GOOGLE_APPLICATION_CREDENTIALS_NAME)
 
+if GOOGLE_CLOUD_PROJECT:
+    GOOGLE_APPLICATION_CREDENTIALS_NAME = ENV.get_value('GOOGLE_APPLICATION_CREDENTIALS',
+                                                        default='configurations/google_cloud_credentials.json')
+    GOOGLE_APPLICATION_CREDENTIALS_FILE = BASE_DIR / str(GOOGLE_APPLICATION_CREDENTIALS_NAME)
 
-if not GOOGLE_APPLICATION_CREDENTIALS_FILE.exists():
-    raise RuntimeError('%s does not exist' % GOOGLE_APPLICATION_CREDENTIALS_FILE)
+    if not GOOGLE_APPLICATION_CREDENTIALS_FILE.exists():
+        raise RuntimeError('%s does not exist' % GOOGLE_APPLICATION_CREDENTIALS_FILE)
 
-
-# Test environ
-if TRAMPOLINE_CI and not GOOGLE_CLOUD_PROJECT:
-    # CI environ
-    placeholder = (
-        f'BF_SECRET_KEY=some-secret-value\n'
-        'GS_BUCKET_NAME=None\n'
-        'BF_ALLOWED_HOSTS=*\n'
-        'BF_DEBUG=True\n'
-        'BF_JWT_AUTH_KEY=some-jwt-secret-value\n'
-    )
-
-    ENV.read_env(io.StringIO(placeholder))
-
-
-# [Secrets]
-# Secrets overwrite values
-# Local secrets
-ENV_SECRETS_FILE_NAME = ENV.get_value('BF_SECRETS_ENV_NAME', default=None)
-
-
-if ENV_SECRETS_FILE_NAME:
-    ENV_SECRETS_FILE_PATH = BASE_DIR / str(ENV_SECRETS_FILE_NAME)
-
-    ENV.read_env(ENV_SECRETS_FILE_PATH)
-
-
-if GOOGLE_CLOUD_PROJECT and not TRAMPOLINE_CI:
     # Google secret manager environ
     settings_name = ENV.get_value('BF_SETTINGS_NAME', default='django_settings')
 
@@ -81,26 +45,19 @@ if GOOGLE_CLOUD_PROJECT and not TRAMPOLINE_CI:
     payload = client.access_secret_version(name=name).payload.data.decode('UTF-8')
 
     ENV.read_env(io.StringIO(payload), overwrite=True)
-# [/Secrets]
-# [/Custom]
-
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = ENV.get_value('BF_SECRET_KEY')
-BF_JWT_AUTH_KEY = ENV.get_value('BF_JWT_AUTH_KEY')
-
 
 # By default, always run in production mode
 DEBUG = ENV.get_value('BF_DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = ENV.get_value('BF_ALLOWED_HOSTS', cast=list)
 
-
-if GOOGLE_CLOUD_PROJECT:
+if DEBUG is False:
     SECURE_SSL_REDIRECT = True
     CSRF_TRUSTED_ORIGINS = ALLOWED_HOSTS
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
 
 ##################
 # AUTHENTICATION #
@@ -156,27 +113,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-
 # Database
-if not TRAMPOLINE_CI:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': _PROJECT_NAME,
-            'USER': _PROJECT_NAME,
-            'PASSWORD': ENV.get_value('BF_PSQL_PASSWORD'),
-            'HOST': ENV.get_value('BF_PSQL_HOST'),
-            'PORT': ENV.get_value('BF_PSQL_PORT', default='5432'),
-        },
-    }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': _PROJECT_NAME,
-        },
-    }
-
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': ENV.get_value('BF_PSQL_NAME', default=_PROJECT_NAME),
+        'USER': ENV.get_value('BF_PSQL_USER', default=_PROJECT_NAME),
+        'PASSWORD': ENV.get_value('BF_PSQL_PASSWORD'),
+        'HOST': ENV.get_value('BF_PSQL_HOST'),
+        'PORT': ENV.get_value('BF_PSQL_PORT', default='5432'),
+    },
+}
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -194,14 +141,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 ########
 # CSRF #
 ########
 
-
 CSRF_FAILURE_VIEW = "base.views.csrf_failure"
-
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
@@ -212,9 +156,8 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
-if GOOGLE_CLOUD_PROJECT and not TRAMPOLINE_CI:
+if GOOGLE_CLOUD_PROJECT:
     GS_BUCKET_NAME = ENV.get_value('GS_BUCKET_NAME')
     GS_DEFAULT_ACL = 'publicRead'
 
@@ -230,7 +173,6 @@ else:
     MEDIA_URL = '/media/'
     MEDIA_ROOT = str(BASE_DIR / 'media/')
 
-
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -240,6 +182,7 @@ PROJECT_TITLE = ''.join(_i.capitalize() for _i in PROJECT_NAME.split())
 PROJECT_DESCRIPTION = '%s is a free file storage' % PROJECT_TITLE
 PROJECT_URL = ''
 PROJECT_KEYWORDS = 'free, files, storage'
+
 if DEBUG:
     PROJECT_ROBOTS = 'none, noarchive'
 else:

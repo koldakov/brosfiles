@@ -37,6 +37,11 @@ libraries can't be downloaded from Google engine.
     - To create key see [this](https://cloud.google.com/iam/docs/creating-managing-service-account-keys#iam-service-account-keys-create-console)
     - Set path of this key to GOOGLE_APPLICATION_CREDENTIALS see [.env.template](.env.template)
 
+#### Important
+
+GAE not supported after `e7c71b8320f3470606fb7e747caa745851aa9dd6` commit.
+Later GAE related code will be fully removed.
+
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Testing
