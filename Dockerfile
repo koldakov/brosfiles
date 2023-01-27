@@ -43,13 +43,10 @@ RUN chown -R ${APP_USER}:${APP_USER} ${WORK_DIR}
 WORKDIR ${WORK_DIR}
 
 # Open ports
-EXPOSE ${PORT}
+EXPOSE 8080
 
 # Set project user
 USER ${APP_USER}:${APP_USER}
-
-# Prepare project for the start
-RUN python ${WORK_DIR}/manage.py collectstatic --noinput
 
 # Main launch command
 CMD ["./entrypoint.sh"]

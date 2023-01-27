@@ -17,12 +17,8 @@ DEFAULT_JWT_EXPIRATION_TIME: int = 60 * 60
 def create_superuser(apps: StateApps, schema_editor: DatabaseSchemaEditor) -> Tuple[User, bool]:
     """ Dynamically creates an admin user as part of a migration.
     """
-    if settings.TRAMPOLINE_CI:
-        admin_username = 'admin'
-        admin_password = 'test'
-    else:
-        admin_username = settings.ENV.get_value('BF_ADMIN_USERNAME')
-        admin_password = settings.ENV.get_value('BF_ADMIN_PASSWORD')
+    admin_username = settings.ENV.get_value('BF_ADMIN_USERNAME')
+    admin_password = settings.ENV.get_value('BF_ADMIN_PASSWORD')
 
     with transaction.atomic():
         try:

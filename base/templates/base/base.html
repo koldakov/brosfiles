@@ -34,12 +34,20 @@
       {% endblock %}
     </title>
     {% block scripts %}
-      <script src="{% static 'admin/js/vendor/jquery/jquery.min.js' %}?v={% get_setting 'project_build_hash' %}">
+      <script
+        src="{% static 'admin/js/vendor/jquery/jquery.min.js' %}?v={% get_setting 'project_build_hash' %}"
+        type="application/javascript"
+      >
       </script>
       <script
         src="{% static 'bootstrap/js/bootstrap.min.js' %}?v={% get_setting 'project_build_hash' %}"
-        crossorigin="anonymous"></script>
-      <script src="{% static 'base/js/base.js' %}?v={% get_setting 'project_build_hash' %}">
+        crossorigin="anonymous"
+        type="application/javascript"
+      ></script>
+      <script
+        src="{% static 'base/js/base.js' %}?v={% get_setting 'project_build_hash' %}"
+        type="application/javascript"
+      >
       </script>
     {% endblock %}
     {% block styles %}

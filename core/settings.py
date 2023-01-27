@@ -56,7 +56,12 @@ ALLOWED_HOSTS = ENV.get_value('BF_ALLOWED_HOSTS', cast=list)
 
 if DEBUG is False:
     SECURE_SSL_REDIRECT = True
-    CSRF_TRUSTED_ORIGINS = ALLOWED_HOSTS
+
+    if ENV.get_value('BF_CSRF_TRUSTED_ORIGINS', default=None) is None:
+        CSRF_TRUSTED_ORIGINS = ['https://%s' % _host for _host in ALLOWED_HOSTS]
+    else:
+        CSRF_TRUSTED_ORIGINS = ENV.get_value('BF_CSRF_TRUSTED_ORIGINS', cast=list)
+
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 ##################
@@ -113,17 +118,24 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-# Database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': ENV.get_value('BF_PSQL_NAME', default=_PROJECT_NAME),
-        'USER': ENV.get_value('BF_PSQL_USER', default=_PROJECT_NAME),
-        'PASSWORD': ENV.get_value('BF_PSQL_PASSWORD'),
-        'HOST': ENV.get_value('BF_PSQL_HOST'),
-        'PORT': ENV.get_value('BF_PSQL_PORT', default='5432'),
-    },
-}
+if ENV.get_value('BF_PSQL_PASSWORD', default=None) is None:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': ENV.get_value('BF_PSQL_NAME', default=_PROJECT_NAME),
+            'USER': ENV.get_value('BF_PSQL_USER', default=_PROJECT_NAME),
+            'PASSWORD': ENV.get_value('BF_PSQL_PASSWORD'),
+            'HOST': ENV.get_value('BF_PSQL_HOST'),
+            'PORT': ENV.get_value('BF_PSQL_PORT', default='5432'),
+        },
+    }
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
