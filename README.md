@@ -54,6 +54,22 @@ To run unit tests:
 
 For migrations, add `BF_ADMIN_USERNAME` and `BF_ADMIN_PASSWORD` to virtual environment to create admin user.
 
+## Notes
+
+### Methodology
+
+1. Do a lot, break a lot
+2. There are no difficult tasks, only interesting
+
+### Important
+
+1. Quality
+2. Security
+3. Google first
+
+### Not important
+1. "GIT history
+
 ## Visitor counter
 
 <img src="https://profile-counter.glitch.me/aivgithub/count.svg" />
