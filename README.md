@@ -24,6 +24,19 @@ Bootstrap libraries won't be added to the project. Run `bash bin/download_bootst
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
+### AWS
+
+#### Deploy the project
+
+1. aws ecr get-login-password --region [REGION] | docker login --username AWS --password-stdin [ECR_DOCKER_URI].[REGION].amazonaws.com/[ECR_REPOSITORY_NAME]
+2. docker tag [DOCKER_IMAGE]:latest [ECR_DOCKER_URI].[REGION].amazonaws.com/[ECR_REPOSITORY_NAME]
+3. docker push [ECR_DOCKER_URI].[REGION].amazonaws.com/[ECR_REPOSITORY_NAME]
+
+#### Configure AWS
+
+1. Instructions won't be provided
+2. Later terraform code will be included
+
 ### Google cloud
 
 1. See [this](https://cloud.google.com/python/django/appengine)
