@@ -47,7 +47,7 @@ Later GAE related code will be fully removed.
 ## Testing
 
 To run unit tests:
-1. `export TRAMPOLINE_CI=1`
+1. `export DEBUG=True`
 2. `python manage.py test`
 
 ## Migrations

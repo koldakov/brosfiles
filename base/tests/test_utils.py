@@ -1,3 +1,4 @@
+import os
 from unittest.mock import Mock
 
 from django.db.backends.postgresql.schema import DatabaseSchemaEditor
@@ -10,6 +11,9 @@ from base.utils import create_superuser
 
 class BaseUtilsCase(TransactionTestCase):
     def setUp(self):
+        os.environ['BF_ADMIN_USERNAME'] = 'admin'
+        os.environ['BF_ADMIN_PASSWORD'] = '123'
+
         self.apps = Mock(spec=StateApps)
         self.schema_editor = Mock(spec=DatabaseSchemaEditor)
 
