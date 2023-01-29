@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
 from django.urls import reverse
-from django.test import Client, TestCase
+from django.test import TestCase
 
 
 class HealthCase(TestCase):
