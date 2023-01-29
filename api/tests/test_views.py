@@ -7,7 +7,6 @@ from django.test import Client, TestCase
 class HealthCase(TestCase):
     def setUp(self):
         self.url = reverse('health')
-        self.client = Client()
 
     def test_get(self):
         response = self.client.get(self.url)
