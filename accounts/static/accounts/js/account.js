@@ -99,19 +99,3 @@ class File {
     });
   }
 }
-
-
-$(document).ready(function() {
-  $("#file-upload-form").submit(function(event) {
-    event.preventDefault();
-
-    try {
-      let file = new File(event.target);
-      file.upload();
-    } catch(e) {
-      console.error(e);
-      alert(e);
-      return;
-    }
-  });
-});
