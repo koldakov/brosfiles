@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
-from django.views.generic import RedirectView
+from django.views.generic import RedirectView, TemplateView
 
 from api.views import Health
 
@@ -26,6 +26,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('health/', Health.as_view(), name='health'),
     path('accounts/', include('accounts.urls'), name='accounts'),
+    path('robots.txt', TemplateView.as_view(template_name='base/robots.txt', content_type='text/plain'), name='robots'),
 ]
 
 
