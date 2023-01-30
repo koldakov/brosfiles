@@ -169,6 +169,9 @@ USE_I18N = True
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
+
+AWS_STORAGE_BUCKET_NAME = ENV.get_value('AWS_STORAGE_BUCKET_NAME', default=None)
+
 if GOOGLE_CLOUD_PROJECT:
     GS_BUCKET_NAME = ENV.get_value('GS_BUCKET_NAME')
     GS_DEFAULT_ACL = 'publicRead'
@@ -178,6 +181,18 @@ if GOOGLE_CLOUD_PROJECT:
 
     MEDIA_URL = 'https://storage.googleapis.com/%s/' % GS_BUCKET_NAME
     STATIC_URL = 'https://storage.googleapis.com/static/%s/' % GS_BUCKET_NAME
+elif AWS_STORAGE_BUCKET_NAME is not None:
+    AWS_ACCESS_KEY_ID = ENV.get_value('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = ENV.get_value('AWS_SECRET_ACCESS_KEY')
+    AWS_S3_REGION_NAME = ENV.get_value('region')
+
+    AWS_S3_FILE_OVERWRITE = False
+    AWS_DEFAULT_ACL = None
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    AWS_S3_ADDRESSING_STYLE = 'virtual'
+
+    STATIC_URL = '/static/'
+    STATIC_ROOT = str(BASE_DIR / 'static/')
 else:
     STATIC_URL = '/static/'
     STATIC_ROOT = str(BASE_DIR / 'static/')

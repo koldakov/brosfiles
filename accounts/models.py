@@ -4,6 +4,7 @@ from pathlib import Path
 import secrets
 from typing import Optional
 
+import boto3
 from django.conf import settings
 from django.contrib.auth.models import (
     AbstractBaseUser,
@@ -28,6 +29,7 @@ from accounts.utils import file_upload_path, get_uuid_hex
 
 MAGIC_MIME = magic.Magic(mime=True)
 DEFAULT_MAX_FILE_SIZE: int = 100 * 2**20
+STORAGE_CLIENT = boto3.client('s3')
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -426,6 +428,8 @@ class File(models.Model):
 
         if settings.GOOGLE_CLOUD_PROJECT:
             return self.generate_google_download_signed_url(expiration=expiration, headers=headers)
+        elif settings.AWS_STORAGE_BUCKET_NAME:
+            return self.generate_aws_s3_download_signed_url(expiration=expiration, headers=headers)
 
         raise NotImplementedError()
 
@@ -580,6 +584,41 @@ class File(models.Model):
             expiration=expiration,
             headers=headers,
             query_parameters=base_query_parameters
+        )
+
+    def generate_aws_s3_download_signed_url(self, expiration=None, headers=None):
+        """Generates AWS S3 download signed URL.
+
+        Args:
+            expiration (int, optional): Expiration time in seconds.
+                If specified must be greater than 0 and less than 60*60*24*7 (7 days).
+                If not specified, then ``File.DEFAULT_SIGNED_URL_EXPIRATION`` will be used.
+            headers (dict, optional): Extra headers.
+
+        Returns:
+            accounts.dataclasses.SignedURLReturnObject: Values that allows clients to download the file.
+        """
+        expiration: int = self.get_signed_url_expiration(expiration)
+        method: str = SignedURLMethod.GET.value
+
+        if headers is None:
+            headers = {}
+
+        url = STORAGE_CLIENT.generate_presigned_url(
+            ClientMethod='get_object',
+            Params={
+                'Bucket': settings.AWS_STORAGE_BUCKET_NAME,
+                'Key': self.file.name,
+                'ResponseContentDisposition': 'attachment; filename ="%s";' % self.original_name,
+            },
+            ExpiresIn=expiration,
+            HttpMethod=method
+        )
+
+        return SignedURLReturnObject(
+            url=url,
+            headers=headers,
+            method=method
         )
 
     def get_h_size(self):
