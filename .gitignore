@@ -110,7 +110,7 @@ log/
 /static
 /.env.dev
 /configurations/cors.json
-/base/static/bootstrap
+/base/static/vendor
 configurations/google_cloud_credentials.json
 
 # WSGI

@@ -1,3 +1,3 @@
-bash bin/download_bootstrap
+bash bin/download_vendor
 
 gcloud app deploy

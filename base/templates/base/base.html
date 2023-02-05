@@ -35,12 +35,16 @@
     </title>
     {% block scripts %}
       <script
+        src="{% static 'vendor/popper/js/popper.min.js' %}?v={% get_setting 'project_build_hash' %}"
+        type="application/javascript"
+      ></script>
+      <script
         src="{% static 'admin/js/vendor/jquery/jquery.min.js' %}?v={% get_setting 'project_build_hash' %}"
         type="application/javascript"
       >
       </script>
       <script
-        src="{% static 'bootstrap/js/bootstrap.min.js' %}?v={% get_setting 'project_build_hash' %}"
+        src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}?v={% get_setting 'project_build_hash' %}"
         crossorigin="anonymous"
         type="application/javascript"
       ></script>
@@ -53,7 +57,7 @@
     {% block styles %}
       <link
         rel="stylesheet"
-        href="{% static 'bootstrap/css/bootstrap.min.css' %}?v={% get_setting 'project_build_hash' %}"
+        href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}?v={% get_setting 'project_build_hash' %}"
         crossorigin="anonymous"
       >
       <link href="{% static 'base/css/base.css' %}?v={% get_setting 'project_build_hash' %}" rel="stylesheet">
