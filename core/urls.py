@@ -18,11 +18,12 @@ from django.contrib import admin
 from django.urls import include, path
 from django.views.generic import RedirectView, TemplateView
 
+from accounts.views import Account
 from api.views import Health
 
 
 urlpatterns = [
-    path('', RedirectView.as_view(pattern_name='accounts:index', permanent=True), name='index'),
+    path('', Account.as_view(), name='index'),
     path('admin/', admin.site.urls),
     path('health/', Health.as_view(), name='health'),
     path('accounts/', include('accounts.urls'), name='accounts'),
