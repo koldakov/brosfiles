@@ -19,3 +19,12 @@ body {
 #main.container {
   padding: 60px 50px 0;
 }
+
+.btn-link {
+  background: none!important;
+  border: none;
+  padding: 0!important;
+  color: #867979;
+  text-decoration: none;
+  cursor: pointer;
+}
