@@ -29,7 +29,6 @@ from accounts.utils import file_upload_path, get_uuid_hex
 
 MAGIC_MIME = magic.Magic(mime=True)
 DEFAULT_MAX_FILE_SIZE: int = 100 * 2**20
-STORAGE_CLIENT = boto3.client('s3')
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -604,15 +603,13 @@ class File(models.Model):
         if headers is None:
             headers = {}
 
-        url = STORAGE_CLIENT.generate_presigned_url(
-            ClientMethod='get_object',
-            Params={
-                'Bucket': settings.AWS_STORAGE_BUCKET_NAME,
-                'Key': self.file.name,
+        url = self.file.storage.url(
+            self.file.name,
+            parameters={
                 'ResponseContentDisposition': 'attachment; filename ="%s";' % self.original_name,
             },
-            ExpiresIn=expiration,
-            HttpMethod=method
+            expire=expiration,
+            http_method=method
         )
 
         return SignedURLReturnObject(
