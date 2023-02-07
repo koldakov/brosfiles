@@ -4,7 +4,6 @@ from pathlib import Path
 import secrets
 from typing import Optional
 
-import boto3
 from django.conf import settings
 from django.contrib.auth.models import (
     AbstractBaseUser,
