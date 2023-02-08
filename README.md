@@ -1,7 +1,7 @@
 # About The Project
 
 File storage.
-This project is focused on deploying on Google cloud.
+This project is focused on deploying on AWS.
 
 ## Installation
 
@@ -20,7 +20,6 @@ Bootstrap libraries won't be added to the project. Run `bash bin/download_vendor
 1. Create .env (`cp .env.template .env`) file with related environment variables
 2. `python manage.py runserver` or `bash entrypoint.sh`
 3. `bash entrypoint.sh` requires `BF_LOCAL_RUN` to be set, see [this](entrypoint.sh)
-4. To run with Google cloud DB see [this](https://cloud.google.com/python/django/appengine#run-locally)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -36,19 +35,6 @@ Bootstrap libraries won't be added to the project. Run `bash bin/download_vendor
 
 1. Instructions won't be provided
 2. Later terraform code will be included
-
-### Google cloud
-
-1. See [this](https://cloud.google.com/python/django/appengine)
-2. To deploy: `bash bin/deploy` (gcloud and wget are needed).
-3. Bootstrap should be placed to `base/static/vendor/bootstrap/` (deploy command includes this step),
-libraries can't be downloaded from Google engine.
-4. To resolve the CORS issues:
-    - cp configurations/cors.json.template configurations/cors.json with needed values
-    - gcloud storage buckets update gs://bucket-name --cors-file=configurations/cors.json
-5. Google Cloud Storage:
-    - To create key see [this](https://cloud.google.com/iam/docs/creating-managing-service-account-keys#iam-service-account-keys-create-console)
-    - Set path of this key to GOOGLE_APPLICATION_CREDENTIALS see [.env.template](.env.template)
 
 #### Important
 

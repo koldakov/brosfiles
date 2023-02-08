@@ -15,7 +15,6 @@ from pathlib import Path
 import secrets
 
 import environ
-from google.cloud import secretmanager
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,26 +24,6 @@ ENV = environ.Env()
 
 PROJECT_NAME = str(ENV.get_value('BF_PROJECT_NAME', default='bros files'))
 _PROJECT_NAME = ''.join(PROJECT_NAME.split())
-
-# Google
-GOOGLE_CLOUD_PROJECT = ENV.get_value('GOOGLE_CLOUD_PROJECT', default=None)
-
-if GOOGLE_CLOUD_PROJECT:
-    GOOGLE_APPLICATION_CREDENTIALS_NAME = ENV.get_value('GOOGLE_APPLICATION_CREDENTIALS',
-                                                        default='configurations/google_cloud_credentials.json')
-    GOOGLE_APPLICATION_CREDENTIALS_FILE = BASE_DIR / str(GOOGLE_APPLICATION_CREDENTIALS_NAME)
-
-    if not GOOGLE_APPLICATION_CREDENTIALS_FILE.exists():
-        raise RuntimeError('%s does not exist' % GOOGLE_APPLICATION_CREDENTIALS_FILE)
-
-    # Google secret manager environ
-    settings_name = ENV.get_value('BF_SETTINGS_NAME', default='django_settings')
-
-    client = secretmanager.SecretManagerServiceClient()
-    name = 'projects/%s/secrets/%s/versions/latest' % (GOOGLE_CLOUD_PROJECT, settings_name)
-    payload = client.access_secret_version(name=name).payload.data.decode('UTF-8')
-
-    ENV.read_env(io.StringIO(payload), overwrite=True)
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = ENV.get_value('BF_SECRET_KEY')
@@ -172,16 +151,7 @@ USE_TZ = True
 
 AWS_STORAGE_BUCKET_NAME = ENV.get_value('AWS_STORAGE_BUCKET_NAME', default=None)
 
-if GOOGLE_CLOUD_PROJECT:
-    GS_BUCKET_NAME = ENV.get_value('GS_BUCKET_NAME')
-    GS_DEFAULT_ACL = 'publicRead'
-
-    DEFAULT_FILE_STORAGE = 'utils.storages.GoogleCloudStorage'
-    STATICFILES_STORAGE = 'utils.storages.GoogleCloudStorageStatic'
-
-    MEDIA_URL = 'https://storage.googleapis.com/%s/' % GS_BUCKET_NAME
-    STATIC_URL = 'https://storage.googleapis.com/static/%s/' % GS_BUCKET_NAME
-elif AWS_STORAGE_BUCKET_NAME is not None:
+if AWS_STORAGE_BUCKET_NAME is not None:
     AWS_ACCESS_KEY_ID = ENV.get_value('AWS_ACCESS_KEY_ID')
     AWS_SECRET_ACCESS_KEY = ENV.get_value('AWS_SECRET_ACCESS_KEY')
     AWS_S3_REGION_NAME = ENV.get_value('AWS_S3_REGION_NAME')
