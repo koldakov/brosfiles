@@ -1,4 +1,3 @@
-import datetime
 from hashlib import sha256
 from pathlib import Path
 import secrets
@@ -9,7 +8,6 @@ from django.contrib.auth.models import (
     AbstractBaseUser,
     PermissionsMixin,
 )
-from django.core.files.storage import default_storage as storage
 from django.core.mail import send_mail
 from django.db import models
 from django.db.models.fields.files import FieldFile
@@ -20,7 +18,6 @@ import magic
 
 from accounts.dataclasses import SignedURLReturnObject
 from accounts.enums import SignedURLMethod
-from accounts.exceptions import NotSupportedSignURLMethod
 from accounts.managers import UserManager
 from accounts.utils import file_upload_path, get_uuid_hex
 

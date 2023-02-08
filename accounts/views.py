@@ -8,17 +8,12 @@ from django.http import HttpResponseForbidden, JsonResponse
 from django.http.request import HttpHeaders
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.translation import gettext as _
 from django.views import View
 
 from accounts.dataclasses import SignedURLReturnObject
-from accounts.enums import TransferType, UploadAction, UploadStatus
-from accounts.exceptions import NotAllowed
 from accounts.forms import SignInForm, FileUploadForm, SignUpForm
-from accounts.models import File, generate_fake_file
-from base.exceptions import FatalSignatureError, SignatureExpiredError
-from base.utils import decode_jwt_signature, generate_jwt_signature
+from accounts.models import File
 
 
 class Account(View):
