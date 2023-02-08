@@ -27,6 +27,7 @@ _PROJECT_NAME = ''.join(PROJECT_NAME.split())
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = ENV.get_value('BF_SECRET_KEY')
+BF_JWT_AUTH_KEY = ENV.get_value('BF_JWT_AUTH_KEY')
 
 # By default, always run in production mode
 DEBUG = ENV.get_value('BF_DEBUG', default=False, cast=bool)
