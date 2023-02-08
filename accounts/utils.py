@@ -4,8 +4,9 @@ from typing import Type
 from uuid import uuid4
 
 from django.db import models
+from django.utils.crypto import get_random_string
 
-from accounts.exceptions import UUID4HEXNotGenerated
+from accounts.exceptions import SafeRandomStringNotGenerated, UUID4HEXNotGenerated
 
 
 def file_upload_path(instance: Type[models.Model], filename: str) -> str:
@@ -48,3 +49,29 @@ def get_uuid_hex(instance: Type[models.Model], field: str, tries: int = 5):
             return uuid4_hex
     else:
         raise UUID4HEXNotGenerated()
+
+
+def get_safe_random_string(instance: Type[models.Model], field: str, tries: int = 5, length: int = 12):
+    """Generates Safe random string.
+
+    Args:
+        instance (models.Model): Instance to which create safe random string.
+        field (str): Field which needs safe random string.
+        tries (int, optional): Number of attempts to generate unique string for given ``field``.
+        length (int, optional): Length of the random string.
+
+    Returns:
+        str: Safe random string.
+
+    Raises:
+        accounts.exceptions.SafeRandomStringNotGenerated: If random string is not generated.
+    """
+    for _ in range(tries):
+        uuid4_hex = get_random_string(length=length)
+
+        try:
+            instance.objects.get(**{field: uuid4_hex})
+        except instance.DoesNotExist:
+            return uuid4_hex
+    else:
+        raise SafeRandomStringNotGenerated()

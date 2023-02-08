@@ -19,7 +19,7 @@ import magic
 from accounts.dataclasses import SignedURLReturnObject
 from accounts.enums import SignedURLMethod
 from accounts.managers import UserManager
-from accounts.utils import file_upload_path, get_uuid_hex
+from accounts.utils import file_upload_path, get_safe_random_string, get_uuid_hex
 
 
 MAGIC_MIME = magic.Magic(mime=True)
@@ -131,7 +131,7 @@ def get_upload_hex():
 
 def get_url_path():
     """Generates unique hash for file."""
-    return '%s%s' % (get_uuid_hex(File, 'url_path'), secrets.token_hex(nbytes=16))
+    return '%s' % get_safe_random_string(File, 'url_path')
 
 
 class File(models.Model):
