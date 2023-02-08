@@ -17,9 +17,8 @@ Bootstrap libraries won't be added to the project. Run `bash bin/download_vendor
 
 ### Development
 
-1. Create .env (`cp .env.template .env`) file with related environment variables
+1. Export `.env.template` with related environment variables
 2. `python manage.py runserver` or `bash entrypoint.sh`
-3. `bash entrypoint.sh` requires `BF_LOCAL_RUN` to be set, see [this](entrypoint.sh)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
