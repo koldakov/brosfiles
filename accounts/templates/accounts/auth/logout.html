@@ -1,6 +1,10 @@
 {% extends 'accounts/base_site.html' %}
 
-{% load i18n %}
+{% load extras i18n %}
+
+{% block page_title %}
+  {% translate "See you soon" %} | {% get_setting "project_title" %}
+{% endblock %}
 
 {% block sign_up %}{% endblock %}
 

@@ -7,7 +7,11 @@
 {% endblock %}
 
 {% block page_title %}
-  {{ request.user }}
+  {% if request.user.is_anonymous %}
+    {% translate "Welcome" %} | {% get_setting "project_title" %}
+  {% else %}
+    {{ request.user }}
+  {% endif %}
 {% endblock %}
 
 {% block container %}

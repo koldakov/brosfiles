@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block page_title %}
-  {{ request.user }}
+  {% translate "Sign in" %} | {% get_setting "project_title" %}
 {% endblock %}
 
 {% block container %}
