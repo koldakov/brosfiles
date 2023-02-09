@@ -4,6 +4,7 @@ from typing import Union
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.views import LoginView
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseForbidden, JsonResponse
 from django.http.request import HttpHeaders
 from django.shortcuts import redirect, render
@@ -20,7 +21,7 @@ class Account(View):
     template_name = 'accounts/account.html'
 
     def get(self, request, *args, **kwargs):
-        file_upload_form: FileUploadForm = FileUploadForm()
+        file_upload_form: FileUploadForm = FileUploadForm(request=request)
 
         return render(
             request=request,
@@ -72,6 +73,9 @@ class FileView(View):
             file = File.objects.get(url_path=url_path)
         except File.DoesNotExist:
             return redirect(reverse('accounts:index'))
+
+        if not file.is_user_has_access(request.user):
+            raise PermissionDenied()
 
         return render(
             request=request,

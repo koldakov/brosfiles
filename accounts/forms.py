@@ -19,6 +19,16 @@ class FileUploadForm(forms.ModelForm):
         ),
         label=_('Upload file')
     )
+    is_private = forms.BooleanField(
+        widget=forms.CheckboxInput(
+            attrs={
+                'class': 'form-check-input',
+            }
+        ),
+        label=_('Private'),
+        required=False,
+        initial=True
+    )
 
     def __init__(self, *args, **kwargs) -> None:
         """Initializes the FileUploadForm.
@@ -42,6 +52,9 @@ class FileUploadForm(forms.ModelForm):
         self.request = kwargs.pop('request', None)
 
         super().__init__(*args, **kwargs)
+
+        if self.is_user_anonymous():
+            self.fields.pop('is_private', None)
 
     def clean_file(self) -> [InMemoryUploadedFile, TemporaryUploadedFile]:
         """Cleans file object and returns cleaned file.
@@ -108,6 +121,7 @@ class FileUploadForm(forms.ModelForm):
         model = File
         fields = (
             'file',
+            'is_private',
         )
 
 

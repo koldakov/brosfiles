@@ -18,8 +18,12 @@
   <form id="file-upload-form" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     {% for field in file_upload_form %}
-      <div class="mb-3">
-        <h1><label for="{{ field.auto_id }}" class="form-label">{{ field.label }}</label></h1>
+      <div class="mb-3 {% if field.field.widget.input_type == 'checkbox' %}form-check form-switch{% endif %}">
+        {% if field.field.widget.input_type == 'file' %}
+          <h1><label for="{{ field.auto_id }}" class="form-label">{{ field.label }}</label></h1>
+        {% else %}
+          <label for="{{ field.auto_id }}" class="form-label">{{ field.label }}</label>
+        {% endif %}
         {{ field }}
         {% if field.help_text %}
           <p class="help">

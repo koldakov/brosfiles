@@ -461,6 +461,15 @@ class File(models.Model):
         """
         return filesizeformat(self.size)
 
+    def is_user_has_access(self, user: User):
+        if self.owner is None:
+            return True
+
+        if not self.is_private:
+            return True
+
+        return self.owner == user
+
 
 def generate_fake_file(original_name):
     file = File()
