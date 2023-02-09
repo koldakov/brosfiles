@@ -1,12 +1,9 @@
 from datetime import timedelta
-from typing import Union
 
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.views import LoginView
 from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseForbidden, JsonResponse
-from django.http.request import HttpHeaders
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.translation import gettext as _
