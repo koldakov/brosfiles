@@ -40,3 +40,4 @@ if settings.DEBUG:
 
 
 handler404 = 'base.views.page_not_found'
+handler403 = 'base.views.page_forbidden'

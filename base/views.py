@@ -9,3 +9,7 @@ def page_not_found(request, exception):
 
 def csrf_failure(request, reason=''):
     return render(request, 'base/errors/csrf_403.html', status=HTTPStatus.FORBIDDEN)
+
+
+def page_forbidden(request, exception):
+    return render(request, 'base/errors/error_403.html', status=HTTPStatus.FORBIDDEN)
