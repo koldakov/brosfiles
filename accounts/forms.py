@@ -93,10 +93,16 @@ class FileUploadForm(forms.ModelForm):
     def is_user_anonymous(self) -> bool:
         """Determines if the user is anonymous.
 
+        Usually forms know nothing about request, so if request is ``None``
+        we assume that user is anonymous.
+
         Returns:
             bool: True if user anonymous, otherwise False.
         """
-        return self.request and self.request.user.is_anonymous
+        if self.request is None:
+            return True
+
+        return self.request.user.is_anonymous
 
     class Meta:
         model = File
