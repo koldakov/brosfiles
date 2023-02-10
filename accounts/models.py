@@ -231,6 +231,10 @@ class File(models.Model):
         blank=False,
         unique=True
     )
+    date_uploaded = models.DateTimeField(
+        _('Uploaded date'),
+        default=timezone.now
+    )
 
     DEFAULT_SIGNED_URL_EXPIRATION = 15 * 60
     MIN_SIGNED_URL_EXPIRATION = 0

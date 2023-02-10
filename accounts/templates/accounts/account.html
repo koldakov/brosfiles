@@ -81,6 +81,7 @@
               <a href="{% url 'accounts:file' url_path=file.url_path %}">{{ file.original_full_name }}</a>
             </div>
             <p class="card-text">{% translate "Mime type:" %} {{ file.content_type }}</p>
+            <p class="card-text">{% translate "Uploaded date:" %} {{ file.date_uploaded }}</p>
             <p class="card-text">
               <small class="text-muted">
                 {% if file.is_private %}

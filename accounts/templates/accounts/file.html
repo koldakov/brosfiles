@@ -21,6 +21,9 @@
       <div>
         {% get_field_verbose_name file "content_type" %}: {{ file.content_type }}
       </div>
+      <div>
+        {% get_field_verbose_name file "date_uploaded" %}: {{ file.date_uploaded }}
+      </div>
     </div>
     {% if not upload_url %}
       <button id="file-download-button" class="btn btn-warning" type="submit">
