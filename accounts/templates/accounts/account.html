@@ -35,4 +35,65 @@
     {% endfor %}
     <button id="file-upload-button" class="btn btn-secondary" type="submit">{% translate "Upload" %}</button>
   </form>
+  {% if files and files.paginator.num_pages > 1 %}
+    <nav>
+      <ul class="pagination">
+        {% if files.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ files.previous_page_number }}" aria-label="{% translate 'Previous' %}">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+        {% else %}
+          <li class="page-item disabled">
+            <a class="page-link" aria-label="{% translate 'Previous' %}">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+        {% endif %}
+        <li class="page-item"><a class="page-link" href="?page=1">1</a></li>
+        <li class="page-item disabled"><a class="page-link">{{ files.number }}</a></li>
+        <li class="page-item">
+          <a class="page-link" href="?page={{ files.paginator.num_pages }}">{{ files.paginator.num_pages }}</a>
+        </li>
+        {% if files.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ files.next_page_number }}" aria-label="{% translate 'Next' %}">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        {% else %}
+          <li class="page-item disabled">
+            <a class="page-link disabled" aria-label="{% translate 'Next' %}">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+  {% endif %}
+  {% if files %}
+    <ol class="list-group">
+      {% for file in files %}
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+          <div class="ms-2 me-auto">
+            <div class="fw-bold">
+              <a href="{% url 'accounts:file' url_path=file.url_path %}">{{ file.original_full_name }}</a>
+            </div>
+            <p class="card-text">{% translate "Mime type:" %} {{ file.content_type }}</p>
+            <p class="card-text">
+              <small class="text-muted">
+                {% if file.is_private %}
+                  {% translate "File is private" %}
+                {% else %}
+                  {% translate "File is public" %}
+                {% endif %}
+              </small>
+            </p>
+          </div>
+          <span class="badge bg-primary rounded-pill">{{ file.size | filesizeformat }}</span>
+        </li>
+      {% endfor %}
+    </ol>
+  {% endif %}
 {% endblock %}

@@ -1,9 +1,11 @@
 from datetime import timedelta
+from typing import Optional
 
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.views import LoginView
 from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.translation import gettext as _
@@ -16,15 +18,25 @@ from accounts.models import File
 
 class Account(View):
     template_name = 'accounts/account.html'
+    page_size = 10
 
     def get(self, request, *args, **kwargs):
         file_upload_form: FileUploadForm = FileUploadForm(request=request)
+        files: Optional[Paginator] = None
+
+        if request.user.is_authenticated:
+            paginator: Paginator = Paginator(
+                File.objects.filter(owner=request.user),
+                self.page_size
+            )
+            files = paginator.get_page(request.GET.get('page'))
 
         return render(
             request=request,
             template_name=self.template_name,
             context={
-                'file_upload_form': file_upload_form
+                'file_upload_form': file_upload_form,
+                'files': files,
             }
         )
 

@@ -243,6 +243,11 @@ class File(models.Model):
     def __str__(self):
         return self.sha256[:8]
 
+    class Meta:
+        verbose_name = _('File')
+        verbose_name_plural = _('Files')
+        ordering = ['-id']
+
     def save(self, *args, **kwargs):
         fake: bool = kwargs.pop('fake', False)
         original_full_name: str = kwargs.pop('original_full_name', None)
