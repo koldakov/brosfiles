@@ -446,7 +446,7 @@ class File(models.Model):
         url = self.file.storage.url(
             self.file.name,
             parameters={
-                'ResponseContentDisposition': 'attachment; filename ="%s";' % self.original_name,
+                'ResponseContentDisposition': 'attachment; filename ="%s";' % self.original_full_name,
             },
             expire=expiration,
             http_method=method
