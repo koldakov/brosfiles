@@ -126,6 +126,8 @@ class FileUploadForm(forms.ModelForm):
 
 
 class SignUpForm(UserCreationForm):
+    USERNAME_MIN_LENGTH = 5
+
     username = forms.CharField(
         widget=forms.TextInput(
             attrs={
@@ -182,6 +184,14 @@ class SignUpForm(UserCreationForm):
             'password1',
             'password2',
         )
+
+    def clean_username(self) -> str:
+        username: str = self.cleaned_data['username']
+
+        if len(username) < self.USERNAME_MIN_LENGTH:
+            raise ValidationError("Username can't be less then %s symbols" % self.USERNAME_MIN_LENGTH)
+
+        return username
 
     def save(self, commit=True):
         user = super(SignUpForm, self).save(commit=False)
