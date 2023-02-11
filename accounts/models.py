@@ -179,7 +179,7 @@ class File(models.Model):
     )
     content_type = models.CharField(
         _('Content type'),
-        max_length=64,
+        max_length=128,
         editable=False,
         null=False,
         blank=False
