@@ -148,6 +148,9 @@ class SignUpView(View):
 
         if signup_form.is_valid():
             signup_form.save()
+            messages.success(request, _('%s, you can sign in now!' % signup_form.cleaned_data.get('username')))
+
+            return redirect(reverse('accounts:signin'))
 
         return render(
             request=request,

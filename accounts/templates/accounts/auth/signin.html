@@ -33,7 +33,10 @@
     {% if messages %}
       <ul class="list-group">
         {% for message in messages %}
-          <li class="list-group-item list-group-item-danger">{{ message }}</li>
+          <li
+            class="list-group-item list-group-item-{% if message.tags == 'success' %}{{ message.tags }}{% else %}danger{% endif %}">
+              {{ message }}
+          </li>
         {% endfor %}
       </ul>
     {% endif %}
