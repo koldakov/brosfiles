@@ -16,20 +16,147 @@ from accounts.forms import SignInForm, FileUploadForm, SignUpForm
 from accounts.models import File
 
 
+BOOK_CONTENT_TYPES = (
+    'application/vnd.amazon.ebook',
+    'application/epub+zip',
+)
+
+
+IMAGE_CONTENT_TYPES = (
+    'image/avif',
+    'image/bmp',
+    'image/gif',
+    'image/jpeg',
+    'image/png',
+    'image/tiff',
+    'image/webp',
+)
+
+
+ARCHIVE_CONTENT_TYPES = (
+    'application/x-bzip',
+    'application/x-bzip2',
+    'application/gzip',
+    'application/vnd.rar',
+    'application/x-tar',
+    'application/zip',
+    'application/x-7z-compressed',
+)
+
+
+DOCUMENT_CONTENT_TYPES = (
+    'application/x-abiword',
+    'application/x-freearc',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.oasis.opendocument.presentation',
+    'application/vnd.oasis.opendocument.spreadsheet',
+    'application/vnd.oasis.opendocument.text',
+    'application/pdf',
+    'application/vnd.ms-powerpoint',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    'application/rtf',
+    'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+)
+
+
+AUDIO_CONTENT_TYPES = (
+    'audio/aac',
+    'audio/midi',
+    'audio/x-midi',
+    'audio/mpeg',
+    'audio/ogg',
+    'audio/wav',
+    'audio/webm',
+    'audio/3gpp',
+    'audio/3gpp2',
+)
+
+
+VIDEO_CONTENT_TYPES = (
+    'video/mp4',
+    'video/mpeg',
+    'video/ogg',
+    'video/mp2t',
+    'video/webm',
+    'video/3gpp',
+    'video/3gpp2',
+)
+
+
+CATEGORIES = {
+    'books': {
+        'content_types': BOOK_CONTENT_TYPES,
+        'verbose_name': _('Books'),
+    },
+    'images': {
+        'content_types': IMAGE_CONTENT_TYPES,
+        'verbose_name': _('Images'),
+    },
+    'archives': {
+        'content_types': ARCHIVE_CONTENT_TYPES,
+        'verbose_name': _('Archives'),
+    },
+    'documents': {
+        'content_types': DOCUMENT_CONTENT_TYPES,
+        'verbose_name': _('Documents'),
+    },
+    'audios': {
+        'content_types': AUDIO_CONTENT_TYPES,
+        'verbose_name': _('Audios'),
+    },
+    'videos': {
+        'content_types': VIDEO_CONTENT_TYPES,
+        'verbose_name': _('Videos'),
+    },
+    'default': {
+        'content_types': None,
+        'verbose_name': _('All files'),
+    },
+}
+
+
 class Account(View):
     template_name = 'accounts/account.html'
     page_size = 10
 
     def get(self, request, *args, **kwargs):
         file_upload_form: FileUploadForm = FileUploadForm(request=request)
-        files: Optional[Paginator] = None
 
-        if request.user.is_authenticated:
-            paginator: Paginator = Paginator(
-                File.objects.filter(owner=request.user),
-                self.page_size
+        if not request.user.is_authenticated:
+            return render(
+                request=request,
+                template_name=self.template_name,
+                context={
+                    'file_upload_form': file_upload_form,
+                    'files': None,
+                }
             )
-            files = paginator.get_page(request.GET.get('page'))
+
+        category: str = request.GET.get('category', 'default')
+        cond: dict = dict(
+            owner=request.user
+        )
+
+        try:
+            current_category: dict = CATEGORIES[category]
+        except KeyError:
+            raise PermissionDenied()
+
+        current_category.update(dict(name=category))
+
+        content_types = current_category['content_types']
+
+        if content_types is not None:
+            # In case of default - all files content_types can be None
+            cond.update(dict(content_type__in=content_types))
+
+        paginator: Paginator = Paginator(
+            File.objects.filter(**cond),
+            self.page_size
+        )
+        files: Paginator = paginator.get_page(request.GET.get('page'))
 
         return render(
             request=request,
@@ -37,6 +164,8 @@ class Account(View):
             context={
                 'file_upload_form': file_upload_form,
                 'files': files,
+                'categories': CATEGORIES,
+                'current_category': current_category,
             }
         )
 

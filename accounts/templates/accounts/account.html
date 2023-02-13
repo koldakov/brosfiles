@@ -72,6 +72,31 @@
       </ul>
     </nav>
   {% endif %}
+  {% if user.is_authenticated %}
+    <div class="dropdown">
+      <button
+        class="btn btn-secondary dropdown-toggle"
+        type="button"
+        id="file-categories-dropdown"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        {% translate "Categories" %} ({{ current_category.verbose_name }})
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="file-categories-dropdown">
+        {% for category, properties in categories.items %}
+          <li>
+            <a
+              class="dropdown-item {% if current_category.name == category %} active {% endif %}"
+              href="?category={{ category }}"
+            >
+              {{ properties.verbose_name }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
   {% if files %}
     <ol class="list-group">
       {% for file in files %}
@@ -96,5 +121,7 @@
         </li>
       {% endfor %}
     </ol>
+  {% else %}
+    <p>{% translate "No files found, try to change category."%}</p>
   {% endif %}
 {% endblock %}
