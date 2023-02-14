@@ -122,6 +122,8 @@
       {% endfor %}
     </ol>
   {% else %}
-    <p>{% translate "No files found, try to change category."%}</p>
+    {% if user.is_authenticated %}
+      <p>{% translate "No files found, try to change category."%}</p>
+    {% endif %}
   {% endif %}
 {% endblock %}
