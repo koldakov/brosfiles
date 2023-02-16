@@ -2,6 +2,14 @@
 
 {% load extras i18n %}
 
+{% block extrastyle %}
+  <link
+    href="{% static 'accounts/css/auth.css' %}?v={% get_setting 'project_build_hash' %}"
+    rel="stylesheet"
+    type="text/css"
+  />
+{% endblock %}
+
 {% block page_title %}
   {% translate "See you soon" %} | {% get_setting "project_title" %}
 {% endblock %}

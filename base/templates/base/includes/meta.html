@@ -1,0 +1,21 @@
+{% load extras %}
+
+<!-- CEO -->
+<meta
+  name="description"
+  content="{% get_setting 'project_description' %}"
+/>
+<meta property="og:title" content="{% get_setting 'project_title' %}" />
+<meta
+  property="og:description"
+  content="{% get_setting 'project_description' %}"
+/>
+<meta property="og:url" content="{% get_setting 'project_url' %}" />
+<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+<meta name="keywords" content="{% get_setting 'project_keywords' %}" />
+{% block blockrobots %}
+  <meta name="robots" content="{% get_setting 'project_robots' %}" />
+{% endblock %}
+<meta name="description" content="{% get_setting 'project_description' %}" />
+<!-- /CEO -->
+<meta charset="utf-8" />

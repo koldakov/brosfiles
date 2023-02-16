@@ -1,0 +1,21 @@
+{% load extras static %}
+
+<script
+  src="{% static 'vendor/popper/js/popper.min.js' %}?v={% get_setting 'project_build_hash' %}"
+  type="application/javascript"
+></script>
+<script
+  src="{% static 'admin/js/vendor/jquery/jquery.min.js' %}?v={% get_setting 'project_build_hash' %}"
+  type="application/javascript"
+>
+</script>
+<script
+  src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}?v={% get_setting 'project_build_hash' %}"
+  crossorigin="anonymous"
+  type="application/javascript"
+></script>
+<script
+  src="{% static 'base/js/base.js' %}?v={% get_setting 'project_build_hash' %}"
+  type="application/javascript"
+>
+</script>

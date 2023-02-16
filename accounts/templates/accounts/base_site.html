@@ -3,40 +3,15 @@
 {% load static i18n %}
 {% load extras %}
 
-{% block extra_navbar_nav %}
-  {% if user.is_anonymous %}
-    <li class="nav-item">
-      <a class="nav-link active" href="{% url 'accounts:signin' %}">{% translate "Sign in" %}</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link active" href="{% url 'accounts:signup' %}">{% translate "Sign up" %}</a>
-    </li>
-  {% else %}
-    <li class="nav-item dropdown">
-      <a
-        class="nav-link dropdown-toggle"
-        href="#"
-        id="nav-menu-link"
-        role="button"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
-      >
-        {% translate "Settings" %}
-      </a>
-      <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="nav-menu-link">
-        <li class="nav-item">
-          <span class="dropdown-item">{% translate "Username" %}: {{ request.user.username }}</span>
-        </li>
-        <li><hr class="dropdown-divider"></li>
-        <li class="nav-item">
-          <a class="dropdown-item" href="#">
-            <form id="logout-form" method="post" action="{% url 'accounts:logout' %}">
-              {% csrf_token %}
-              <button class="btn-link" type="submit">{% translate "Logout"  %}</button>
-            </form>
-          </a>
-        </li>
-      </ul>
-    </li>
-  {% endif %}
+{% block aside %}
+  {% with request.resolver_match.url_name as url_name %}
+    <ul class="sidebar-nav" id="sidebar-nav">
+      <li class="nav-item">
+        <a class="nav-link {% if url_name == 'index' %}active{% endif %}" href="{% url 'index' %}">
+          <i class="bi bi-person"></i>
+          <span>{% translate "Home" %}</span>
+        </a>
+      </li>
+    </ul>
+  {% endwith %}
 {% endblock %}

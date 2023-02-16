@@ -5,98 +5,94 @@
 {% get_current_language as LANGUAGE_CODE %}
 <html lang="{{ LANGUAGE_CODE|default:'en-us' }}">
   <head>
-    <!-- CEO -->
-    <meta
-      name="description"
-      content="{% get_setting 'project_description' %}"
-    />
-    <meta property="og:title" content="{% get_setting 'project_title' %}" />
-    <meta
-      property="og:description"
-      content="{% get_setting 'project_description' %}"
-    />
-    <meta property="og:url" content="{% get_setting 'project_url' %}" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <meta name="keywords" content="{% get_setting 'project_keywords' %}" />
-    {% block blockrobots %}
-      <meta name="robots" content="{% get_setting 'project_robots' %}" />
-    {% endblock %}
-    <meta name="description" content="{% get_setting 'project_description' %}" />
-    <!-- /CEO -->
-    <meta charset="utf-8" />
+    {% include "base/includes/meta.html" %}
     <title>
       {% block page_title %}
-        {% if page_title %}
-          {{ page_title }}
-        {% else %}
-          {% get_setting "project_title" %}
-        {% endif %}
+        {% if page_title %}{{ page_title }}{% else %}{% get_setting "project_title" %}{% endif %}
       {% endblock %}
     </title>
-    {% block scripts %}
-      <script
-        src="{% static 'vendor/popper/js/popper.min.js' %}?v={% get_setting 'project_build_hash' %}"
-        type="application/javascript"
-      ></script>
-      <script
-        src="{% static 'admin/js/vendor/jquery/jquery.min.js' %}?v={% get_setting 'project_build_hash' %}"
-        type="application/javascript"
-      >
-      </script>
-      <script
-        src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}?v={% get_setting 'project_build_hash' %}"
-        crossorigin="anonymous"
-        type="application/javascript"
-      ></script>
-      <script
-        src="{% static 'base/js/base.js' %}?v={% get_setting 'project_build_hash' %}"
-        type="application/javascript"
-      >
-      </script>
-    {% endblock %}
     {% block styles %}
-      <link
-        rel="stylesheet"
-        href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}?v={% get_setting 'project_build_hash' %}"
-        crossorigin="anonymous"
-      >
-      <link href="{% static 'base/css/base.css' %}?v={% get_setting 'project_build_hash' %}" rel="stylesheet">
+      {% include "base/includes/styles.html" %}
     {% endblock %}
     {% block extrascript %}{% endblock %}
     {% block extrastyle %}{% endblock %}
     {% block extrahead %}{% endblock %}
   </head>
-  <body>
-    <header>
-      {% block header %}
-        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-          <div class="container-md">
-            <a class="navbar-brand" href="{% url 'index' %}">
-              {% get_setting 'project_title' %}
-            </a>
-            <button
-              class="navbar-toggler"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#navbar-collapse"
-              aria-controls="navbar-collapse"
-              aria-expanded="false"
-              aria-label="Toggle navigation"
+  <body class="d-flex flex-column min-vh-100">
+    <header id="header" class="header fixed-top d-flex align-items-center">
+      <div class="d-flex align-items-center justify-content-between">
+        <a href="{% url 'index' %}"
+           class="logo d-flex align-items-center"
+        >
+          <span class="d-none d-lg-block">
+            {% get_setting "project_title" %}
+          </span>
+        </a>
+        <i class="fa-solid fa-sliders toggle-sidebar-btn"></i>
+      </div>
+      {% if user.is_authenticated %}
+        <div class="search-bar">
+          <form class="search-form d-flex align-items-center" method="POST" action="#">
+            <input
+              type="text"
+              name="query"
+              placeholder="{% translate 'Search' %}"
+              title="{% translate 'Enter search keyword' %}"
             >
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse text-right" id="navbar-collapse">
-              <ul class="navbar-nav ms-auto flex-nowrap">
-                {% block extra_navbar_nav %}{% endblock %}
+            <button type="submit" title="{% translate 'Search' %}"><i class="fa-solid fa-magnifying-glass"></i></button>
+          </form>
+        </div>
+        <nav class="header-nav ms-auto">
+          <ul class="d-flex align-items-center">
+            <li class="nav-item d-block d-lg-none">
+              <a class="nav-link nav-icon search-bar-toggle" href="#">
+                <i class="fa-solid fa-magnifying-glass"></i>
+              </a>
+            </li>
+            <li class="nav-item dropdown pe-3">
+              <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                <span class="dropdown-toggle ps-2">{% translate "Settings" %}</span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                <li>
+                  {{ user.username }}
+                </li>
+                <li class="devider"></li>
+                <li>
+                  <a href="{% url 'accounts:logout' %}">
+                    <div class="dropdown-item d-flex align-items-center" id="logout-form" role="button">
+                      <span data-method="post" data-action="{% url 'accounts:logout' %}">
+                        {% translate 'Log out' %}
+                      </span>
+                    </div>
+                  </a>
+                </li>
               </ul>
-            </div>
-          </div>
+            </li>
+          </ul>
         </nav>
-      {% endblock %}
+      {% else %}
+        <nav class="nav header-nav ms-auto">
+          <ul class="d-flex align-items-center">
+            <li class="nav-item pe-3">
+              <a href="{% url 'accounts:signin' %}">{% translate "Sign In" %}</a>
+            </li>
+            <li class="nav-item pe-3">
+              <a href="{% url 'accounts:signup' %}">{% translate "Sign Up" %}</a>
+            </li>
+          </ul>
+        </nav>
+      {% endif %}
     </header>
-    <main role="main" id="main" class="container">
-      {% block container %}
+    <aside id="sidebar" class="sidebar">
+      {% block aside %}
       {% endblock %}
+    </aside>
+    <main id="main-content" class="main">
+      <section class="section">
+        {% block container %}
+        {% endblock %}
+      </section>
     </main>
     <footer class="footer">
       {% block footer %}
@@ -107,5 +103,8 @@
         </div>
       {% endblock %}
     </footer>
+    {% block scripts %}
+      {% include "base/includes/scripts.html" %}
+    {% endblock %}
   </body>
 </html>

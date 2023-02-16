@@ -6,6 +6,14 @@
   <script src="{% static 'accounts/js/account.js' %}?v={% get_setting 'project_build_hash' %}"></script>
 {% endblock %}
 
+{% block extrastyle %}
+  <link
+    href="{% static 'accounts/css/auth.css' %}?v={% get_setting 'project_build_hash' %}"
+    rel="stylesheet"
+    type="text/css"
+  />
+{% endblock %}
+
 {% block page_title %}
   {% translate "Sign up" %} | {% get_setting "project_title" %}
 {% endblock %}

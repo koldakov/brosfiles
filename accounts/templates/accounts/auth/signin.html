@@ -6,40 +6,43 @@
   <script src="{% static 'accounts/js/account.js' %}?v={% get_setting 'project_build_hash' %}"></script>
 {% endblock %}
 
+{% block extrastyle %}
+  <link
+    href="{% static 'accounts/css/auth.css' %}?v={% get_setting 'project_build_hash' %}"
+    rel="stylesheet"
+    type="text/css"
+  />
+{% endblock %}
+
 {% block page_title %}
   {% translate "Sign in" %} | {% get_setting "project_title" %}
 {% endblock %}
 
 {% block container %}
-  <h1>{% translate "Sign in" %}</h1>
   <form id="signup-form" method="POST">
     {% csrf_token %}
-    {% for field in signin_form %}
-      <div class="form-group">
-        <label for="{{ field.auto_id }}" class="form-label">{{ field.label }}</label>
-        {{ field }}
-        {% if field.help_text %}
-          <small class="form-text text-muted">{{ field.help_text }}</small>
-        {% endif %}
-        {% if field.errors %}
-          <ul class="list-group">
-            {% for error in field.errors %}
-              <li class="list-group-item list-group-item-danger">{{ error }}</li>
-            {% endfor %}
-          </ul>
-        {% endif %}
+    <div class="row d-flex justify-content-center">
+      <div class="col-md-6">
+        <div class="card px-5 py-5" id="form1">
+          <div class="form-data">
+            <div class="forms-inputs mb-4"> <span>Email or username</span> <input autocomplete="off" type="text" name="username">
+            </div>
+            <div class="forms-inputs mb-4"><span>Password</span><input autocomplete="off" type="password" name="password">
+            </div>
+            <div class="mb-3"><button type="submit" class="btn btn-dark w-100">{% translate "Sign In" %}</button></div>
+          </div>
+        </div>
+          {% if messages %}
+            <ul class="list-group">
+              {% for message in messages %}
+                <li
+                  class="list-group-item list-group-item-{% if message.tags == 'success' %}{{ message.tags }}{% else %}danger{% endif %}">
+                    {{ message }}
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
       </div>
-    {% endfor %}
-    {% if messages %}
-      <ul class="list-group">
-        {% for message in messages %}
-          <li
-            class="list-group-item list-group-item-{% if message.tags == 'success' %}{{ message.tags }}{% else %}danger{% endif %}">
-              {{ message }}
-          </li>
-        {% endfor %}
-      </ul>
-    {% endif %}
-    <button id="file-upload-button" class="btn btn-secondary" type="submit">{% translate "Sign in" %}</button>
+    </div>
   </form>
 {% endblock %}
