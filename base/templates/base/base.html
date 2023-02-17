@@ -5,63 +5,14 @@
 {% get_current_language as LANGUAGE_CODE %}
 <html lang="{{ LANGUAGE_CODE|default:'en-us' }}">
   <head>
-    <!-- CEO -->
-    <meta
-      name="description"
-      content="{% get_setting 'project_description' %}"
-    />
-    <meta property="og:title" content="{% get_setting 'project_title' %}" />
-    <meta
-      property="og:description"
-      content="{% get_setting 'project_description' %}"
-    />
-    <meta property="og:url" content="{% get_setting 'project_url' %}" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <meta name="keywords" content="{% get_setting 'project_keywords' %}" />
-    {% block blockrobots %}
-      <meta name="robots" content="{% get_setting 'project_robots' %}" />
-    {% endblock %}
-    <meta name="description" content="{% get_setting 'project_description' %}" />
-    <!-- /CEO -->
-    <meta charset="utf-8" />
+    {% include "base/includes/meta.html" %}
     <title>
       {% block page_title %}
-        {% if page_title %}
-          {{ page_title }}
-        {% else %}
-          {% get_setting "project_title" %}
-        {% endif %}
+        {% if page_title %}{{ page_title }}{% else %}{% get_setting "project_title" %}{% endif %}
       {% endblock %}
     </title>
-    {% block scripts %}
-      <script
-        src="{% static 'vendor/popper/js/popper.min.js' %}?v={% get_setting 'project_build_hash' %}"
-        type="application/javascript"
-      ></script>
-      <script
-        src="{% static 'admin/js/vendor/jquery/jquery.min.js' %}?v={% get_setting 'project_build_hash' %}"
-        type="application/javascript"
-      >
-      </script>
-      <script
-        src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}?v={% get_setting 'project_build_hash' %}"
-        crossorigin="anonymous"
-        type="application/javascript"
-      ></script>
-      <script
-        src="{% static 'base/js/base.js' %}?v={% get_setting 'project_build_hash' %}"
-        type="application/javascript"
-      >
-      </script>
-    {% endblock %}
-    {% block styles %}
-      <link
-        rel="stylesheet"
-        href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}?v={% get_setting 'project_build_hash' %}"
-        crossorigin="anonymous"
-      >
-      <link href="{% static 'base/css/base.css' %}?v={% get_setting 'project_build_hash' %}" rel="stylesheet">
-    {% endblock %}
+    {% include "base/includes/scripts.html" %}
+    {% include "base/includes/styles.html" %}
     {% block extrascript %}{% endblock %}
     {% block extrastyle %}{% endblock %}
     {% block extrahead %}{% endblock %}

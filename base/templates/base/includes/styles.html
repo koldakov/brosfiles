@@ -1,0 +1,8 @@
+{% load extras static %}
+
+<link
+  rel="stylesheet"
+  href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}?v={% get_setting 'project_build_hash' %}"
+  crossorigin="anonymous"
+>
+<link href="{% static 'base/css/base.css' %}?v={% get_setting 'project_build_hash' %}" rel="stylesheet">
