@@ -15,115 +15,89 @@
 {% endblock %}
 
 {% block container %}
-  <form id="file-upload-form" method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    {% for field in file_upload_form %}
-      <div class="mb-3 {% if field.field.widget.input_type == 'checkbox' %}form-check form-switch{% endif %}">
-        {% if field.field.widget.input_type == 'file' %}
-          <h1><label for="{{ field.auto_id }}" class="form-label">{{ field.label }}</label></h1>
-        {% else %}
-          <label for="{{ field.auto_id }}" class="form-label">{{ field.label }}</label>
-        {% endif %}
-        {{ field }}
-        {% if field.help_text %}
-          <p class="help">
-            {{ field.help_text|safe }}
-          </p>
-        {% endif %}
-        {{ field.errors }}
-      </div>
-    {% endfor %}
-    <button id="file-upload-button" class="btn btn-secondary" type="submit">{% translate "Upload" %}</button>
-  </form>
-  {% if files and files.paginator.num_pages > 1 %}
-    <nav>
-      <ul class="pagination">
-        {% if files.has_previous %}
-          <li class="page-item">
-            <a class="page-link" href="?page={{ files.previous_page_number }}" aria-label="{% translate 'Previous' %}">
-              <span aria-hidden="true">&laquo;</span>
-            </a>
-          </li>
-        {% else %}
-          <li class="page-item disabled">
-            <a class="page-link" aria-label="{% translate 'Previous' %}">
-              <span aria-hidden="true">&laquo;</span>
-            </a>
-          </li>
-        {% endif %}
-        <li class="page-item"><a class="page-link" href="?page=1">1</a></li>
-        <li class="page-item disabled"><a class="page-link">{{ files.number }}</a></li>
-        <li class="page-item">
-          <a class="page-link" href="?page={{ files.paginator.num_pages }}">{{ files.paginator.num_pages }}</a>
-        </li>
-        {% if files.has_next %}
-          <li class="page-item">
-            <a class="page-link" href="?page={{ files.next_page_number }}" aria-label="{% translate 'Next' %}">
-              <span aria-hidden="true">&raquo;</span>
-            </a>
-          </li>
-        {% else %}
-          <li class="page-item disabled">
-            <a class="page-link disabled" aria-label="{% translate 'Next' %}">
-              <span aria-hidden="true">&raquo;</span>
-            </a>
-          </li>
-        {% endif %}
-      </ul>
-    </nav>
-  {% endif %}
-  {% if user.is_authenticated %}
-    <div class="dropdown">
-      <button
-        class="btn btn-secondary dropdown-toggle"
-        type="button"
-        id="file-categories-dropdown"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
-      >
-        {% translate "Categories" %} ({{ current_category.verbose_name }})
-      </button>
-      <ul class="dropdown-menu" aria-labelledby="file-categories-dropdown">
-        {% for category, properties in categories.items %}
-          <li>
-            <a
-              class="dropdown-item {% if current_category.name == category %} active {% endif %}"
-              href="?category={{ category }}"
-            >
-              {{ properties.verbose_name }}
-            </a>
-          </li>
-        {% endfor %}
-      </ul>
-    </div>
-  {% endif %}
-  {% if files %}
-    <ol class="list-group">
-      {% for file in files %}
-        <li class="list-group-item d-flex justify-content-between align-items-start">
-          <div class="ms-2 me-auto">
-            <div class="fw-bold">
-              <a href="{% url 'accounts:file' url_path=file.url_path %}">{{ file.original_full_name }}</a>
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="row">
+        <div class="col-12">
+          <div class="card overflow-auto">
+            <div class="card-body">
+              <h5 class="card-title">{% translate "Upload file" %}</h5>
+              <hr/>
+              <form id="file-upload-form" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                  {% for field in file_upload_form %}
+                    <div
+                      class="mb-2{% if field.field.widget.input_type == 'checkbox' %} form-check form-switch{% endif %}"
+                    >
+                      {% if field.field.widget.input_type != 'file' %}
+                        <label for="{{ field.auto_id }}" class="form-label">{{ field.label }}</label>
+                      {% endif %}
+                      {{ field }}
+                      {% if not field.help_text %}
+                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                      {% endif %}
+                      {{ field.errors }}
+                    </div>
+                  {% endfor %}
+                  <button id="file-upload-button" class="btn btn-secondary" type="submit">
+                    {% translate "Upload" %}
+                  </button>
+              </form>
             </div>
-            <p class="card-text">{% translate "Mime type:" %} {{ file.content_type }}</p>
-            <p class="card-text">{% translate "Uploaded date:" %} {{ file.date_uploaded }}</p>
-            <p class="card-text">
-              <small class="text-muted">
-                {% if file.is_private %}
-                  {% translate "File is private" %}
-                {% else %}
-                  {% translate "File is public" %}
-                {% endif %}
-              </small>
-            </p>
           </div>
-          <span class="badge bg-primary rounded-pill">{{ file.size | filesizeformat }}</span>
-        </li>
-      {% endfor %}
-    </ol>
-  {% else %}
-    {% if user.is_authenticated %}
-      <p>{% translate "No files found, try to change category."%}</p>
-    {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% if user.is_authenticated %}
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">
+                  {% translate "My files" %}
+                </h5>
+                <div class="dropdown">
+                  <button
+                    class="btn btn-secondary dropdown-toggle"
+                    type="button"
+                    id="file-categories-dropdown"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    {% translate "Category" %} ({{ current_category.verbose_name }})
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="file-categories-dropdown">
+                    {% for category, properties in categories.items %}
+                      <li>
+                        <a
+                          class="dropdown-item{% if current_category.name == category %} active{% endif %}"
+                          href="?category={{ category }}"
+                        >
+                          {{ properties.verbose_name }}
+                        </a>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+                <hr/>
+                {% if files %}
+                  {% include "accounts/includes/pagination.html" with obj=files %}
+                  <div class="row row-cols-1 row-cols-md-3 g-4">
+                    {% for file in files %}
+                      {% include "accounts/includes/file.html" with file=file %}
+                    {% endfor %}
+                  </div>
+                {% else %}
+                  <p>{% translate "No files found, try to change category." %}</p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   {% endif %}
 {% endblock %}

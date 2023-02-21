@@ -1,0 +1,39 @@
+{% load i18n %}
+
+{% if obj and obj.paginator.num_pages > 1 %}
+  <nav>
+    <ul class="pagination">
+      {% if obj.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ obj.previous_page_number }}" aria-label="{% translate 'Previous' %}">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled">
+          <a class="page-link" aria-label="{% translate 'Previous' %}">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+      {% endif %}
+      <li class="page-item"><a class="page-link" href="?page=1">1</a></li>
+      <li class="page-item disabled"><a class="page-link">{{ obj.number }}</a></li>
+      <li class="page-item">
+        <a class="page-link" href="?page={{ obj.paginator.num_pages }}">{{ obj.paginator.num_pages }}</a>
+      </li>
+      {% if obj.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ obj.next_page_number }}" aria-label="{% translate 'Next' %}">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled">
+          <a class="page-link disabled" aria-label="{% translate 'Next' %}">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+      {% endif %}
+    </ul>
+  </nav>
+{% endif %}

@@ -1,0 +1,16 @@
+{% extends "base/base.html" %}
+
+{% load i18n %}
+
+{% block aside %}
+  {% with request.resolver_match.url_name as url_name %}
+    <ul class="sidebar-nav" id="sidebar-nav">
+      <li class="nav-item">
+        <a class="nav-link{% if url_name == 'index' %} collapsed{% endif %}" href="{% url 'index' %}">
+          <i class="fa-solid fa-house"></i>
+          <span>{% translate "Home" %}</span>
+        </a>
+      </li>
+    </ul>
+  {% endwith %}
+{% endblock %}

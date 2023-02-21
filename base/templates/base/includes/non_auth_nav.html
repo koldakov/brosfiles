@@ -1,0 +1,12 @@
+{% load i18n %}
+
+<nav class="nav header-nav ms-auto">
+  <ul class="d-flex align-items-center">
+    <li class="nav-item pe-3">
+      <a href="{% url 'accounts:signin' %}">{% translate "Sign In" %}</a>
+    </li>
+    <li class="nav-item pe-3">
+      <a href="{% url 'accounts:signup' %}">{% translate "Sign Up" %}</a>
+    </li>
+  </ul>
+</nav>

@@ -11,41 +11,95 @@
         {% if page_title %}{{ page_title }}{% else %}{% get_setting "project_title" %}{% endif %}
       {% endblock %}
     </title>
-    {% include "base/includes/scripts.html" %}
     {% include "base/includes/styles.html" %}
-    {% block extrascript %}{% endblock %}
     {% block extrastyle %}{% endblock %}
     {% block extrahead %}{% endblock %}
   </head>
   <body>
-    <header>
-      {% block header %}
-        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-          <div class="container-md">
-            <a class="navbar-brand" href="{% url 'index' %}">
-              {% get_setting 'project_title' %}
-            </a>
-            <button
-              class="navbar-toggler"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#navbar-collapse"
-              aria-controls="navbar-collapse"
-              aria-expanded="false"
-              aria-label="Toggle navigation"
+    <header id="header" class="header fixed-top d-flex align-items-center">
+      <div class="d-flex align-items-center justify-content-between">
+        <a href="{% url 'index' %}"
+           class="logo d-flex align-items-center"
+        >
+          <span>
+            {% get_setting "project_title" %}
+          </span>
+        </a>
+        <i class="fa-solid fa-arrow-right-arrow-left toggle-sidebar-btn"></i>
+      </div>
+      {% if user.is_authenticated %}
+        <div class="search-bar">
+          <form class="search-form d-flex align-items-center" method="POST" action="">
+            <input
+              type="text"
+              name="query"
+              placeholder="{% translate 'Search' %}"
+              title="{% translate 'Enter search keyword' %}"
             >
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse text-right" id="navbar-collapse">
-              <ul class="navbar-nav ms-auto flex-nowrap">
-                {% block extra_navbar_nav %}{% endblock %}
+            <button type="submit" title="{% translate 'Search' %}"><i class="fa-solid fa-magnifying-glass"></i></button>
+          </form>
+        </div>
+        <nav class="header-nav ms-auto">
+          <ul class="d-flex align-items-center">
+            <li class="nav-item d-block d-lg-none">
+              <a class="nav-link nav-icon search-bar-toggle" href="#">
+                <i class="fa-solid fa-magnifying-glass"></i>
+              </a>
+            </li>
+            <li class="nav-item dropdown pe-3">
+              <a
+                class="dropdown-toggle nav-profile align-items-center pe-0"
+                id="nav-dropdown-menu"
+                data-bs-toggle="dropdown"
+                data-bs-auto-close="outside"
+                aria-expanded="false"
+                href="#"
+              >
+                {% translate "Settings" %}
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="nav-dropdown-menu">
+                <li class="dropdown-item">
+                  <div class="row">
+                    <div class="col-lg-12">
+                      <div class="row">
+                        <div class="col-12">
+                          <div class="card overflow-auto">
+                            <div class="card-body">
+                              <h5 class="card-title">
+                                <span class="text-muted">{{ user.first_name }}&nbsp{{ user.last_name }}</span>
+                              </h5>
+                              <hr/>
+                              <p>{{ user.email }}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li class="dropdown-divider"></li>
+                <li class="dropdown-item">
+                  <a href="{% url 'accounts:logout' %}">
+                    <div class="dropdown-item d-flex align-items-center" id="logout-form" role="button">
+                      <span data-method="post" data-action="{% url 'accounts:logout' %}">
+                        {% translate 'Log out' %}
+                      </span>
+                    </div>
+                  </a>
+                </li>
               </ul>
-            </div>
-          </div>
+            </li>
+          </ul>
         </nav>
-      {% endblock %}
+      {% else %}
+        {% include "base/includes/non_auth_nav.html" %}
+      {% endif %}
     </header>
-    <main role="main" id="main" class="container">
+    <aside id="sidebar" class="sidebar">
+      {% block aside %}
+      {% endblock %}
+    </aside>
+    <main role="main" id="main-content" class="main">
       {% block container %}
       {% endblock %}
     </main>
@@ -58,5 +112,7 @@
         </div>
       {% endblock %}
     </footer>
+    {% include "base/includes/scripts.html" %}
+    {% block extrascript %}{% endblock %}
   </body>
 </html>

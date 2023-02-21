@@ -11,35 +11,48 @@
 {% endblock %}
 
 {% block container %}
-  <h1>{% translate "Sign in" %}</h1>
-  <form id="signup-form" method="POST">
-    {% csrf_token %}
-    {% for field in signin_form %}
-      <div class="form-group">
-        <label for="{{ field.auto_id }}" class="form-label">{{ field.label }}</label>
-        {{ field }}
-        {% if field.help_text %}
-          <small class="form-text text-muted">{{ field.help_text }}</small>
-        {% endif %}
-        {% if field.errors %}
-          <ul class="list-group">
-            {% for error in field.errors %}
-              <li class="list-group-item list-group-item-danger">{{ error }}</li>
-            {% endfor %}
-          </ul>
-        {% endif %}
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="row">
+        <div class="col-12">
+          <div class="card overflow-auto">
+            <div class="card-body">
+              <h5 class="card-title">{% translate "Sign in" %}</h5>
+              <hr />
+              <form id="signup-form" method="POST">
+                {% csrf_token %}
+                {% for field in signin_form %}
+                  <div class="mb-2">
+                    <label for="{{ field.auto_id }}" class="form-label">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                      <small class="form-text text-muted">{{ field.help_text }}</small>
+                    {% endif %}
+                    {% if field.errors %}
+                      <ul class="list-group">
+                        {% for error in field.errors %}
+                          <li class="list-group-item list-group-item-danger">{{ error }}</li>
+                        {% endfor %}
+                      </ul>
+                    {% endif %}
+                  </div>
+                {% endfor %}
+                {% if messages %}
+                  <ul class="list-group">
+                    {% for message in messages %}
+                      <li
+                        class="list-group-item list-group-item-{% if message.tags == 'success' %}{{ message.tags }}{% else %}danger{% endif %}">
+                          {{ message }}
+                      </li>
+                    {% endfor %}
+                  </ul>
+                {% endif %}
+                <button class="btn btn-secondary" type="submit">{% translate "Sign in" %}</button>
+              </form>
+            </div>
+          </div>
+        </div>
       </div>
-    {% endfor %}
-    {% if messages %}
-      <ul class="list-group">
-        {% for message in messages %}
-          <li
-            class="list-group-item list-group-item-{% if message.tags == 'success' %}{{ message.tags }}{% else %}danger{% endif %}">
-              {{ message }}
-          </li>
-        {% endfor %}
-      </ul>
-    {% endif %}
-    <button id="file-upload-button" class="btn btn-secondary" type="submit">{% translate "Sign in" %}</button>
-  </form>
+    </div>
+  </div>
 {% endblock %}

@@ -1,4 +1,4 @@
-{% extends "base/base.html" %}
+{% extends "base/base_site.html" %}
 
 {% load i18n %}
 
@@ -7,11 +7,24 @@
 {% endblock %}
 
 {% block container %}
-  <h1>{% translate "Something went wrong" %}</h1>
-  <p>
-    {% translate "Back to" %}
-    <a href="{% url 'index' %}">
-      {% translate "known paths" %}.
-    </a>
-  </p>
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="row">
+        <div class="col-12">
+          <div class="card overflow-auto">
+            <div class="card-body">
+              <h5 class="card-title">{% translate "Something went wrong" %}</h5>
+              <hr/>
+              <p>
+                {% translate "Back to" %}
+                <a href="{% url 'index' %}">
+                  {% translate "known paths" %}.
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}

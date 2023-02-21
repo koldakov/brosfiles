@@ -1,0 +1,25 @@
+{% load i18n %}
+
+<div class="col">
+  <div class="card h-100">
+    <div class="card-body">
+      <h5 class="card-title">
+        <a href="{% url 'accounts:file' url_path=file.url_path %}">{{ file.original_full_name }}</a>
+      </h5>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item"><i class="fa-solid fa-file-code"></i>&nbsp{{ file.size | filesizeformat }}</li>
+        <li class="list-group-item"><i class="fa-solid fa-file"></i>&nbsp{{ file.content_type }}</li>
+        <li class="list-group-item">
+          {% if file.is_private %}
+            <i class="fa-solid fa-lock"></i>&nbsp{% translate "File is private" %}
+          {% else %}
+            <i class="fa-solid fa-lock-open"></i>&nbsp{% translate "File is public" %}
+          {% endif %}
+        </li>
+      </ul>
+    </div>
+    <div class="card-footer">
+      <small class="text-muted">{% translate "Uploaded date" %}:&nbsp{{ file.date_uploaded }}</small>
+    </div>
+  </div>
+</div>

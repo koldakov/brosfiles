@@ -119,7 +119,31 @@ CATEGORIES = {
 
 class Account(View):
     template_name = 'accounts/account.html'
-    page_size = 10
+    page_size = 12
+
+    # noinspection PyMethodMayBeStatic
+    def get_condition(self, user, current_category) -> dict:
+        cond: dict = dict(
+            owner=user
+        )
+        content_types = current_category['content_types']
+
+        if content_types is not None:
+            # In case of default - all files content_types can be None
+            cond.update(dict(content_type__in=content_types))
+
+        return cond
+
+    # noinspection PyMethodMayBeStatic
+    def get_current_category(self, category) -> dict:
+        try:
+            current_category: dict = CATEGORIES[category]
+        except KeyError:
+            raise PermissionDenied()
+
+        current_category.update(dict(name=category))
+
+        return current_category
 
     def get(self, request, *args, **kwargs):
         file_upload_form: FileUploadForm = FileUploadForm(request=request)
@@ -135,22 +159,9 @@ class Account(View):
             )
 
         category: str = request.GET.get('category', 'default')
-        cond: dict = dict(
-            owner=request.user
-        )
 
-        try:
-            current_category: dict = CATEGORIES[category]
-        except KeyError:
-            raise PermissionDenied()
-
-        current_category.update(dict(name=category))
-
-        content_types = current_category['content_types']
-
-        if content_types is not None:
-            # In case of default - all files content_types can be None
-            cond.update(dict(content_type__in=content_types))
+        current_category: dict = self.get_current_category(category)
+        cond: dict = self.get_condition(request.user, current_category)
 
         paginator: Paginator = Paginator(
             File.objects.filter(**cond),
@@ -188,11 +199,34 @@ class Account(View):
                 )
             )
 
+        if not request.user.is_authenticated:
+            return render(
+                request=request,
+                template_name=self.template_name,
+                context={
+                    'file_upload_form': file_upload_form
+                }
+            )
+
+        category: str = request.GET.get('category', 'default')
+
+        current_category: dict = self.get_current_category(category)
+        cond: dict = self.get_condition(request.user, current_category)
+
+        paginator: Paginator = Paginator(
+            File.objects.filter(**cond),
+            self.page_size
+        )
+        files: Paginator = paginator.get_page(request.GET.get('page'))
+
         return render(
             request=request,
             template_name=self.template_name,
             context={
-                'file_upload_form': file_upload_form
+                'file_upload_form': file_upload_form,
+                'files': files,
+                'categories': CATEGORIES,
+                'current_category': current_category,
             }
         )
 

@@ -9,9 +9,20 @@
 {% block sign_up %}{% endblock %}
 
 {% block container %}
-  <h1>{% translate "See you!" %}</h1>
-  <p class="d-flex align-items-center">
-    {% translate "Thanks for spending some quality time with us." %}
-    &nbsp<a href="{% url 'accounts:signin' %}">{% translate 'Sign in again' %}</a>
-  </p>
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="row">
+        <div class="col-12">
+          <div class="card overflow-auto">
+            <div class="card-body">
+              <h5 class="card-title">{% translate "See you!" %}</h5>
+              <hr/>
+              <p>{% translate "Thanks for spending some quality time with us." %}</p>
+              <p><a href="{% url 'accounts:signin' %}">{% translate 'Sign in again' %}</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}
