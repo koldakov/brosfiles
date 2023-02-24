@@ -1,5 +1,6 @@
 from typing import Type
 
+from currencies import Currency
 from django import template
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models
@@ -49,3 +50,10 @@ def get_field_verbose_name(instance: Type[models.Model], field_name: str):
         return instance._meta.get_field(field_name).verbose_name
     except FieldDoesNotExist:
         return ''
+
+
+@register.simple_tag
+def get_price_for_product(product):
+    currency = Currency(product.currency)
+
+    return currency.get_money_format(product.price)

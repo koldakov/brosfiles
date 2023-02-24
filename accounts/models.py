@@ -15,6 +15,7 @@ from django.template.defaultfilters import filesizeformat
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 import magic
+from payments.models import BasePayment
 
 from accounts.dataclasses import SignedURLReturnObject
 from accounts.enums import SignedURLMethod
@@ -490,3 +491,78 @@ def generate_fake_file(original_name):
     file.save(fake=True, original_full_name=original_name)
 
     return file
+
+
+class Product(models.Model):
+    title = models.CharField(
+        _('Title'),
+        max_length=128,
+        editable=True,
+        null=False,
+        blank=False
+    )
+    description = models.TextField(
+        _('Description'),
+        editable=True,
+        null=True,
+        blank=True
+    )
+    price = models.DecimalField(
+        _('Price'),
+        max_digits=16,
+        decimal_places=2,
+        editable=True,
+        null=True,
+        blank=True
+    )
+    sku = models.CharField(
+        _('SKU'),
+        max_length=16,
+        editable=True,
+        null=True,
+        blank=True
+    )
+    currency = models.CharField(
+        _('Currency'),
+        max_length=8,
+        editable=True,
+        null=False,
+        blank=False
+    )
+
+
+def get_payment_hex():
+    """Generates UUID4 hex for payment_hex field."""
+    return get_uuid_hex(Payment, 'payment_hex')
+
+
+class Payment(BasePayment):
+    payment_hex = models.CharField(
+        _('Payment hex'),
+        max_length=32,
+        default=get_payment_hex,
+        editable=False,
+        null=False,
+        blank=False,
+        unique=True
+    )
+    client = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='payments',
+        null=False,
+        blank=False
+    )
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name='payments',
+        null=False,
+        blank=False
+    )
+
+    def get_failure_url(self) -> str:
+        return 'https://%s/accounts/callbacks/failure/?ph=%s' % (settings.PAYMENT_HOST, self.payment_hex)
+
+    def get_success_url(self) -> str:
+        return 'https://%s/accounts/callbacks/success/?ph=%s' % (settings.PAYMENT_HOST, self.payment_hex)

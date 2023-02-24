@@ -28,6 +28,7 @@ urlpatterns = [
     path('health/', Health.as_view(), name='health'),
     path('accounts/', include('accounts.urls'), name='accounts'),
     path('robots.txt', TemplateView.as_view(template_name='base/robots.txt', content_type='text/plain'), name='robots'),
+    path('payments/', include('payments.urls')),
 ]
 
 

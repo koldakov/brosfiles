@@ -1,1 +1,14 @@
 {% extends "base/base_site.html" %}
+
+{% load i18n %}
+
+{% block extraaside %}
+  {% with request.resolver_match.url_name as url_name %}
+  <li class="nav-item">
+    <a class="nav-link{% if url_name == 'products' %} collapsed{% endif %}" href="{% url 'accounts:products' %}">
+      <i class="fa-solid fa-database"></i>
+      <span>{% translate "Products" %}</span>
+    </a>
+  </li>
+  {% endwith %}
+{% endblock %}

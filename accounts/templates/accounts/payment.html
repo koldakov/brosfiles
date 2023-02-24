@@ -1,0 +1,27 @@
+{% extends "accounts/base_site.html" %}
+
+{% load extras i18n static %}
+
+{% block page_title %}
+  {% translate "Proceed payment" %}
+{% endblock %}
+
+{% block container %}
+  <div class="row">
+    <div class="col">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">
+            {{ file.original_full_name }}
+          </h5>
+          <hr />
+          <form action="{{ form.action }}" method="{{ form.method }}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <p><input type="submit" value="Proceed" /></p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

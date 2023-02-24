@@ -43,12 +43,18 @@ if DEBUG is False:
 
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
+    REST_FRAMEWORK = {
+        'DEFAULT_RENDERER_CLASSES': (
+            'rest_framework.renderers.JSONRenderer',
+        )
+    }
+
 ##################
 # AUTHENTICATION #
 ##################
 AUTH_USER_MODEL = 'accounts.User'
 
-LOGIN_URL = "/accounts/sigin/"
+LOGIN_URL = "/accounts/signin/"
 
 LOGIN_REDIRECT_URL = "/"
 
@@ -66,6 +72,7 @@ INSTALLED_APPS = [
     'accounts',
     'base',
     'fontawesomefree',
+    'payments',
 ]
 
 MIDDLEWARE = [
@@ -188,3 +195,20 @@ if DEBUG:
 else:
     PROJECT_ROBOTS = 'index'
 # [/CEO]
+
+# Payments
+PAYMENT_HOST = ENV.get_value('BF_PAYMENT_HOST')
+
+PAYMENT_MODEL = 'accounts.Payment'
+
+PAYMENT_USES_SSL = DEBUG
+
+PAYMENT_VARIANTS = {
+    'default': (
+        'payments.stripe.StripeProvider',
+        {
+            'public_key': ENV.get_value('STRIPE_PUBLIC_KEY'),
+            'secret_key': ENV.get_value('STRIPE_SECRET_KEY'),
+        }
+    )
+}
