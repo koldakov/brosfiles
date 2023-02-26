@@ -6,6 +6,18 @@
   {% translate "Proceed payment" %}
 {% endblock %}
 
+{% block extraaside %}
+  {{ block.super }}
+  {% with request.resolver_match.url_name as url_name %}
+  <li class="nav-item">
+    <a class="nav-link{% if url_name == 'process_payment' %} collapsed{% endif %}" href="{% url 'accounts:products' %}">
+      <i class="fa-solid fa-money-check-dollar"></i>
+      <span>{% translate "Payments" %}</span>
+    </a>
+  </li>
+  {% endwith %}
+{% endblock %}
+
 {% block container %}
   <div class="row">
     <div class="col">
