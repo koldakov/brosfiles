@@ -100,6 +100,14 @@ class UserAdmin(admin.ModelAdmin):
         (None, {'fields': ('username', 'password')}),
         (_('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
         (
+            _('Products'),
+            {
+                'fields': (
+                    'current_product',
+                )
+            }
+        ),
+        (
             _('Permissions'),
             {
                 'fields': (

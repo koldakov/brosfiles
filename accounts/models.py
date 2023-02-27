@@ -88,6 +88,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         null=True,
         blank=True
     )
+    current_product = models.ForeignKey(
+        'accounts.Product',
+        related_name='clients',
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE
+    )
 
     objects = UserManager()
 
