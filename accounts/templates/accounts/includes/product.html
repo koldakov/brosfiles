@@ -1,4 +1,4 @@
-{% load extras i18n %}
+{% load accounts_extras extras i18n %}
 
 <div class="col">
   <div class="card h-100">
@@ -10,10 +10,17 @@
       {{ product.description }}
     </div>
     <div class="card-footer">
+      {% get_product_internal_info product user as product_internal_info %}
+      <div class="text-muted">{{ product_internal_info.message }}</div>
       <form id="file-download-form" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <input type="hidden" value="{{ product.id }}" name="product_id"/>
-        <button id="file-download-button" class="btn btn-success" type="submit">
+        <button
+          id="file-download-button"
+          class="btn btn-success"
+          type="submit"
+          {% if not product_internal_info.is_available %}disabled{% endif %}
+        >
           {% translate "Buy for" %}&nbsp{% get_price_for_product product %}&nbsp/&nbsp{% translate "month" %}
         </button>
       </form>

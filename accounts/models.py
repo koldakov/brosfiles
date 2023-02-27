@@ -538,6 +538,20 @@ class Product(models.Model):
         blank=False
     )
 
+    def get_internal_info(self, user: User):
+        is_available = user.current_product != self
+
+        if not is_available:
+            return {
+                'is_available': is_available,
+                'message': _('This product already yours!'),
+            }
+
+        return {
+                'is_available': is_available,
+                'message': _('Product is available!'),
+            }
+
 
 def get_payment_hex():
     """Generates UUID4 hex for payment_hex field."""
