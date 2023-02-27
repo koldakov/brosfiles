@@ -501,6 +501,8 @@ class PaymentCallbackView(LoginRequiredMixin, View):
         if self.is_payment_expired(payment):
             raise PermissionDenied()
 
+        payment.configure_user()
+
         return render(
             request,
             template_name=self.template_name,

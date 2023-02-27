@@ -15,6 +15,7 @@ from django.template.defaultfilters import filesizeformat
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 import magic
+from payments import PaymentStatus
 from payments.models import BasePayment
 
 from accounts.dataclasses import SignedURLReturnObject
@@ -573,3 +574,11 @@ class Payment(BasePayment):
 
     def get_success_url(self) -> str:
         return 'https://%s/accounts/callbacks/success/?ph=%s' % (settings.PAYMENT_HOST, self.payment_hex)
+
+    def configure_user(self):
+        if self.status != PaymentStatus.CONFIRMED:
+            return
+
+        self.client.current_product = self.product
+
+        self.client.save()
