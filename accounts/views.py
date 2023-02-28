@@ -16,7 +16,7 @@ from payments import PaymentStatus
 from payments import get_payment_model, RedirectNeeded
 
 from accounts.dataclasses import SignedURLReturnObject
-from accounts.forms import SignInForm, FileUploadForm, SignUpForm
+from accounts.forms import ChangePasswordForm, SignInForm, FileUploadForm, SignUpForm
 from accounts.models import File, Subscription
 
 PAYMENT_MODEL = get_payment_model()
@@ -522,5 +522,39 @@ class PaymentCallbackView(LoginRequiredMixin, View):
             context={
                 'payment': payment,
                 'is_success': payment_status == 'success',
+            }
+        )
+
+
+class SettingsView(LoginRequiredMixin, View):
+    template_name = 'accounts/settings.html'
+
+    def get(self, request, *args, **kwargs):
+        change_password_form = ChangePasswordForm(user=request.user)
+
+        return render(
+            request,
+            template_name=self.template_name,
+            context={
+                'change_password_form': change_password_form,
+            }
+        )
+
+    def post(self, request, *args, **kwargs):
+        change_password_form = ChangePasswordForm(data=request.POST, user=request.user)
+
+        if change_password_form.is_valid():
+            messages.success(request, _('Password has been changed'))
+
+            change_password_form.save()
+            login(request, request.user)
+
+            return redirect(reverse('accounts:settings'))
+
+        return render(
+            request,
+            template_name=self.template_name,
+            context={
+                'change_password_form': change_password_form,
             }
         )

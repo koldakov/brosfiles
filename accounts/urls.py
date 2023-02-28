@@ -7,6 +7,7 @@ from accounts.views import (
     PaymentCallbackView,
     ProcessPaymentView,
     ProductsView,
+    SettingsView,
     SigInView,
     SignUpView
 )
@@ -24,4 +25,5 @@ urlpatterns = [
     path('payments/<str:payment_hex>/process/', ProcessPaymentView.as_view(), name='process_payment'),
     path('products/', ProductsView.as_view(), name='products'),
     path('callbacks/<str:payment_status>/', PaymentCallbackView.as_view()),
+    path('settings/', SettingsView.as_view(), name='settings'),
 ]

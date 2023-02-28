@@ -1,0 +1,55 @@
+{% extends "accounts/base_site.html" %}
+
+{% load extras i18n static %}
+
+{% block page_title %}
+  {% translate "Proceed payment" %}
+{% endblock %}
+
+{% block container %}
+  <div class="row">
+    <div class="col">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">
+            {% translate "Change password" %}
+          </h5>
+          <hr />
+          <form id="signup-form" method="POST">
+            {% csrf_token %}
+            {% if messages %}
+              <div class="mb-2">
+                <ul class="list-group">
+                  {% for message in messages %}
+                    <li class="list-group-item list-group-item-success">{{ message }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+            {% for field in change_password_form %}
+              <div class="mb-2">
+                <label for="{{ field.auto_id }}" class="form-label">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                  <small class="form-text text-muted">{{ field.help_text }}</small>
+                {% endif %}
+              </div>
+              {% if field.errors %}
+                <div class="mb-2">
+                  <ul class="list-group">
+                    {% for error in field.errors %}
+                      <li class="list-group-item list-group-item-danger">{{ error }}</li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              {% endif %}
+            {% endfor %}
+            <button id="file-upload-button" class="btn btn-secondary" type="submit">
+              {% translate "Change password" %}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
