@@ -29,10 +29,11 @@
       </div>
       {% if user.is_authenticated %}
         <div class="search-bar">
-          <form class="search-form d-flex align-items-center" method="POST" action="">
+          <form class="search-form d-flex align-items-center" method="GET" action="{% url 'index' %}">
             <input
               type="text"
-              name="query"
+              name="q"
+              {% if request.GET.q %}value="{{ request.GET.q }}"{% endif %}
               placeholder="{% translate 'Search' %}"
               title="{% translate 'Enter search keyword' %}"
             >

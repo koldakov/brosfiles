@@ -128,7 +128,7 @@ class Account(View):
     page_size = 12
 
     # noinspection PyMethodMayBeStatic
-    def get_condition(self, user, current_category) -> dict:
+    def get_condition(self, user, current_category, search_query=None) -> dict:
         cond: dict = dict(
             owner=user
         )
@@ -137,6 +137,9 @@ class Account(View):
         if content_types is not None:
             # In case of default - all files content_types can be None
             cond.update(dict(content_type__in=content_types))
+
+        if search_query is not None:
+            cond.update(dict(original_full_name__icontains=search_query))
 
         return cond
 
@@ -165,9 +168,10 @@ class Account(View):
             )
 
         category: str = request.GET.get('category', 'default')
+        search_query: str = request.GET.get('q', None)
 
         current_category: dict = self.get_current_category(category)
-        cond: dict = self.get_condition(request.user, current_category)
+        cond: dict = self.get_condition(request.user, current_category, search_query=search_query)
 
         paginator: Paginator = Paginator(
             File.objects.filter(**cond),
@@ -215,9 +219,10 @@ class Account(View):
             )
 
         category: str = request.GET.get('category', 'default')
+        search_query: str = request.GET.get('q', None)
 
         current_category: dict = self.get_current_category(category)
-        cond: dict = self.get_condition(request.user, current_category)
+        cond: dict = self.get_condition(request.user, current_category, search_query=search_query)
 
         paginator: Paginator = Paginator(
             File.objects.filter(**cond),
