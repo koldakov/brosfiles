@@ -126,6 +126,14 @@ CATEGORIES = {
 class Account(View):
     template_name = 'accounts/account.html'
     page_size = 12
+    # Looks like the max length is 2 ** 8, but 2 ** 6 is big enough
+    max_search_length: int = 2 ** 6
+
+    def check_search_length(self, search_query: str):
+        if self.max_search_length >= len(search_query):
+            return True
+
+        raise PermissionDenied()
 
     # noinspection PyMethodMayBeStatic
     def get_condition(self, user, current_category, search_query=None) -> dict:
@@ -138,7 +146,7 @@ class Account(View):
             # In case of default - all files content_types can be None
             cond.update(dict(content_type__in=content_types))
 
-        if search_query is not None:
+        if search_query is not None and self.check_search_length(search_query):
             cond.update(dict(original_full_name__icontains=search_query))
 
         return cond

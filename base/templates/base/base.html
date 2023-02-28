@@ -36,6 +36,7 @@
               {% if request.GET.q %}value="{{ request.GET.q }}"{% endif %}
               placeholder="{% translate 'Search' %}"
               title="{% translate 'Enter search keyword' %}"
+              maxlength="{% if max_search_length %}{{ max_search_length }}{% else %}64{% endif %}"
             >
             <button type="submit" title="{% translate 'Search' %}"><i class="fa-solid fa-magnifying-glass"></i></button>
           </form>
