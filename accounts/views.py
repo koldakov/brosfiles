@@ -17,7 +17,7 @@ from payments import get_payment_model, RedirectNeeded
 
 from accounts.dataclasses import SignedURLReturnObject
 from accounts.forms import SignInForm, FileUploadForm, SignUpForm
-from accounts.models import File, Product
+from accounts.models import File, Subscription
 
 PAYMENT_MODEL = get_payment_model()
 
@@ -376,7 +376,7 @@ class ProductsView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         # TODO: Don't do like this
-        products = Product.objects.all()
+        products = Subscription.objects.all()
 
         return render(
             request,
@@ -393,8 +393,8 @@ class ProductsView(LoginRequiredMixin, View):
             raise PermissionDenied()
 
         try:
-            product = Product.objects.get(id=product_id)
-        except Product.DoesNotExist:
+            product = Subscription.objects.get(id=product_id)
+        except Subscription.DoesNotExist:
             raise PermissionDenied()
 
         payment = PAYMENT_MODEL.objects.create(

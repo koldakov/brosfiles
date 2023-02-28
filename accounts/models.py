@@ -90,7 +90,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         blank=True
     )
     current_product = models.ForeignKey(
-        'accounts.Product',
+        'accounts.Subscription',
         related_name='clients',
         null=True,
         blank=True,
@@ -501,7 +501,7 @@ def generate_fake_file(original_name):
     return file
 
 
-class Product(models.Model):
+class Subscription(models.Model):
     title = models.CharField(
         _('Title'),
         max_length=128,
@@ -544,12 +544,12 @@ class Product(models.Model):
         if not is_available:
             return {
                 'is_available': is_available,
-                'message': _('This product already yours!'),
+                'message': _('This subscription already yours!'),
             }
 
         return {
                 'is_available': is_available,
-                'message': _('Product is available!'),
+                'message': _('Subscription is available!'),
             }
 
 
@@ -576,7 +576,7 @@ class Payment(BasePayment):
         blank=False
     )
     product = models.ForeignKey(
-        Product,
+        Subscription,
         on_delete=models.CASCADE,
         related_name='payments',
         null=False,

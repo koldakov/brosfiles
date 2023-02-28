@@ -20,7 +20,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
 
-from accounts.models import File, Payment, Product, User
+from accounts.models import File, Payment, Subscription, User
 
 
 csrf_protect_m = method_decorator(csrf_protect)
@@ -305,6 +305,6 @@ class PaymentAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(Product)
+@admin.register(Subscription)
 class PaymentAdmin(admin.ModelAdmin):
     pass
