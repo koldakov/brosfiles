@@ -539,25 +539,24 @@ class ProductBase(models.Model):
     )
 
     def get_internal_info(self, user: User):
-        is_available = user.subscription != self
-
-        if not is_available:
-            return {
-                'is_available': is_available,
-                'message': _('This product already yours!'),
-            }
-
-        return {
-                'is_available': is_available,
-                'message': _('Product is available!'),
-            }
+        raise NotImplementedError()
 
     class Meta:
         abstract = True
 
 
 class Subscription(ProductBase):
-    pass
+    def get_internal_info(self, user: User):
+        is_available = user.subscription != self
+        msg: str = _('Product is available')
+
+        if not is_available:
+            msg = _('This product already yours!')
+
+        return {
+                'is_available': is_available,
+                'message': msg,
+            }
 
 
 def get_payment_hex():
