@@ -3,18 +3,20 @@
 {% load i18n %}
 
 {% block extraaside %}
-  {% with request.resolver_match.url_name as url_name %}
-  <li class="nav-item">
-    <a class="nav-link{% if url_name == 'products' %} collapsed{% endif %}" href="{% url 'accounts:products' %}">
-      <i class="fa-solid fa-database"></i>
-      <span>{% translate "Products" %}</span>
-    </a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link{% if url_name == 'settings' %} collapsed{% endif %}" href="{% url 'accounts:settings' %}">
-      <i class="fa-solid fa-gears"></i>
-      <span>{% translate "Settings" %}</span>
-    </a>
-  </li>
-  {% endwith %}
+  {% if user.is_authenticated %}
+    {% with request.resolver_match.url_name as url_name %}
+    <li class="nav-item">
+      <a class="nav-link{% if url_name == 'products' %} collapsed{% endif %}" href="{% url 'accounts:products' %}">
+        <i class="fa-solid fa-database"></i>
+        <span>{% translate "Products" %}</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link{% if url_name == 'settings' %} collapsed{% endif %}" href="{% url 'accounts:settings' %}">
+        <i class="fa-solid fa-gears"></i>
+        <span>{% translate "Settings" %}</span>
+      </a>
+    </li>
+    {% endwith %}
+  {% endif %}
 {% endblock %}

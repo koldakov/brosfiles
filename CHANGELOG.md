@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.13] - 2023-03-01
+
+### Added
+
+- Settings tab [@AivGitHub](https://github.com/AivGitHub/).
+- Change password form [@AivGitHub](https://github.com/AivGitHub/).
+
+### Fixed
+
+- Styles of success and failure messages in signin and signup forms [@AivGitHub](https://github.com/AivGitHub/).
+- Show logged in tabs to not authenticated user [@AivGitHub](https://github.com/AivGitHub/).
+
 ## [0.0.12] - 2023-02-28
 
 ### Added
