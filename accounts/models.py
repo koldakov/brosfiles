@@ -501,7 +501,7 @@ def generate_fake_file(original_name):
     return file
 
 
-class Subscription(models.Model):
+class ProductBase(models.Model):
     title = models.CharField(
         _('Title'),
         max_length=128,
@@ -544,13 +544,20 @@ class Subscription(models.Model):
         if not is_available:
             return {
                 'is_available': is_available,
-                'message': _('This subscription already yours!'),
+                'message': _('This product already yours!'),
             }
 
         return {
                 'is_available': is_available,
-                'message': _('Subscription is available!'),
+                'message': _('Product is available!'),
             }
+
+    class Meta:
+        abstract = True
+
+
+class Subscription(ProductBase):
+    pass
 
 
 def get_payment_hex():
