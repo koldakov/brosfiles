@@ -103,7 +103,7 @@ class UserAdmin(admin.ModelAdmin):
             _('Products'),
             {
                 'fields': (
-                    'current_product',
+                    'subscription',
                 )
             }
         ),

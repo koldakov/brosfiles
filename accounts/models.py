@@ -89,7 +89,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         null=True,
         blank=True
     )
-    current_product = models.ForeignKey(
+    subscription = models.ForeignKey(
         'accounts.Subscription',
         related_name='clients',
         null=True,
@@ -539,7 +539,7 @@ class ProductBase(models.Model):
     )
 
     def get_internal_info(self, user: User):
-        is_available = user.current_product != self
+        is_available = user.subscription != self
 
         if not is_available:
             return {
@@ -600,6 +600,6 @@ class Payment(BasePayment):
         if self.status != PaymentStatus.CONFIRMED:
             return
 
-        self.client.current_product = self.product
+        self.client.subscription = self.product
 
         self.client.save()
