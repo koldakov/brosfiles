@@ -21,6 +21,19 @@
               <hr />
               <form id="signup-form" method="POST">
                 {% csrf_token %}
+                {% if messages %}
+                  <div class="mb-2">
+                    <ul class="list-group">
+                      {% for message in messages %}
+                        <li
+                          class="list-group-item list-group-item-{% if message.tags == 'success' %}{{ message.tags }}{% else %}danger{% endif %}"
+                        >
+                          {{ message }}
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                {% endif %}
                 {% for field in signin_form %}
                   <div class="mb-2">
                     <label for="{{ field.auto_id }}" class="form-label">{{ field.label }}</label>
@@ -28,25 +41,8 @@
                     {% if field.help_text %}
                       <small class="form-text text-muted">{{ field.help_text }}</small>
                     {% endif %}
-                    {% if field.errors %}
-                      <ul class="list-group">
-                        {% for error in field.errors %}
-                          <li class="list-group-item list-group-item-danger">{{ error }}</li>
-                        {% endfor %}
-                      </ul>
-                    {% endif %}
                   </div>
                 {% endfor %}
-                {% if messages %}
-                  <ul class="list-group">
-                    {% for message in messages %}
-                      <li
-                        class="list-group-item list-group-item-{% if message.tags == 'success' %}{{ message.tags }}{% else %}danger{% endif %}">
-                          {{ message }}
-                      </li>
-                    {% endfor %}
-                  </ul>
-                {% endif %}
                 <button class="btn btn-secondary" type="submit">{% translate "Sign in" %}</button>
               </form>
             </div>

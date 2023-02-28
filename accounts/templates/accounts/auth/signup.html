@@ -28,14 +28,16 @@
                       {% if field.help_text %}
                         <small class="form-text text-muted">{{ field.help_text }}</small>
                       {% endif %}
-                      {% if field.errors %}
+                    </div>
+                    {% if field.errors %}
+                      <div class="mb-2">
                         <ul class="list-group">
                           {% for error in field.errors %}
                             <li class="list-group-item list-group-item-danger">{{ error }}</li>
                           {% endfor %}
                         </ul>
-                      {% endif %}
-                    </div>
+                      </div>
+                    {% endif %}
                   {% endfor %}
                   <button id="file-upload-button" class="btn btn-secondary" type="submit">
                     {% translate "Sign up" %}
