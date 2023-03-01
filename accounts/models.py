@@ -26,6 +26,7 @@ from accounts.utils import file_upload_path, get_safe_random_string, get_uuid_he
 
 MAGIC_MIME = magic.Magic(mime=True)
 DEFAULT_MAX_FILE_SIZE: int = 100 * 2**20
+DEFAULT_MAX_STORAGE_SIZE: int = 10737418240  # 10 * 2 ^ 30 = 10 GB
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -501,6 +502,22 @@ def generate_fake_file(original_name):
     return file
 
 
+class ProductItemPoint(models.Model):
+    short_description = models.CharField(
+        _('Short description'),
+        max_length=128,
+        editable=True,
+        null=False,
+        blank=False
+    )
+    description = models.TextField(
+        _('Description'),
+        editable=True,
+        null=False,
+        blank=False
+    )
+
+
 class ProductBase(models.Model):
     title = models.CharField(
         _('Title'),
@@ -544,15 +561,33 @@ class ProductBase(models.Model):
         related_name='children',
         on_delete=models.CASCADE
     )
+    item_points = models.ManyToManyField(
+        ProductItemPoint,
+        blank=True
+    )
 
     def get_internal_info(self, user: User):
         raise NotImplementedError()
 
     class Meta:
         abstract = True
+        ordering = ['id']
 
 
 class Subscription(ProductBase):
+    max_file_size = models.PositiveIntegerField(
+        _('Maximum file size'),
+        default=DEFAULT_MAX_FILE_SIZE,
+        null=True,
+        blank=True
+    )
+    storage_size = models.PositiveBigIntegerField(
+        _('Storage size'),
+        default=DEFAULT_MAX_STORAGE_SIZE,
+        null=True,
+        blank=True
+    )
+
     def get_internal_info(self, user: User):
         is_available = user.subscription != self
         msg: str = _('Product is available')

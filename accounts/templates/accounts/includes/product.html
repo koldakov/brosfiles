@@ -7,7 +7,18 @@
         {{ product.title }}
       </h5>
       <hr />
-      {{ product.description }}
+      <div class="mb-2">
+        {{ product.description }}
+      </div>
+      <div class="mb-2">
+        <ul>
+          <li>{% translate "Max upload file size" %}:&nbsp{{ product.max_file_size | filesizeformat }}</li>
+          <li>{% translate "Storage size" %}:&nbsp{{ product.storage_size | filesizeformat }}</li>
+          {% for point in product.item_points.all %}
+            <li>{{ point.description }}</li>
+          {% endfor %}
+        </ul>
+      </div>
     </div>
     <div class="card-footer">
       {% get_product_internal_info product user as product_internal_info %}
