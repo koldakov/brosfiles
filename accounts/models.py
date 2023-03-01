@@ -537,6 +537,13 @@ class ProductBase(models.Model):
         null=False,
         blank=False
     )
+    parent = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        related_name='children',
+        on_delete=models.CASCADE
+    )
 
     def get_internal_info(self, user: User):
         raise NotImplementedError()
