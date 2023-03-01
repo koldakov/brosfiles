@@ -306,5 +306,5 @@ class PaymentAdmin(admin.ModelAdmin):
 
 
 @admin.register(Subscription)
-class PaymentAdmin(admin.ModelAdmin):
+class SubscriptionAdmin(admin.ModelAdmin):
     pass
