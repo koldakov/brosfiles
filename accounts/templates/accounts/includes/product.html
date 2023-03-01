@@ -1,10 +1,12 @@
 {% load accounts_extras extras i18n %}
 
+{% get_product_internal_info product user as product_internal_info %}
+
 <div class="col">
   <div class="card h-100">
     <div class="card-body">
       <h5 class="card-title">
-        {{ product.title }}
+        {{ product.title }}{% if product_internal_info.is_current %}&nbsp|&nbsp({% translate "Current" %}){% endif %}
       </h5>
       <hr />
       <div class="mb-2">
@@ -21,7 +23,6 @@
       </div>
     </div>
     <div class="card-footer">
-      {% get_product_internal_info product user as product_internal_info %}
       <div class="text-muted mb-2">{{ product_internal_info.message }}</div>
       <form id="file-download-form" method="POST" enctype="multipart/form-data">
         {% csrf_token %}

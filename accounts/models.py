@@ -589,16 +589,37 @@ class Subscription(ProductBase):
     )
 
     def get_internal_info(self, user: User):
-        is_available = user.subscription != self
-        msg: str = _('Product is available')
+        msg: str = _('Product is available!')
+        is_available: bool = True
+        is_current: bool = False
 
-        if not is_available:
+        if self == user.subscription:
             msg = _('This product already yours!')
+            is_available = False
+            is_current = True
+        elif self.has_purchased_parent(self.parent, user.subscription):
+            msg = _('You have much advanced subscription!')
+            is_available = False
 
         return {
-                'is_available': is_available,
-                'message': msg,
-            }
+            'is_available': is_available,
+            'message': msg,
+            'is_current': is_current,
+        }
+
+    def has_purchased_parent(self, parent_subscription, current_subscription, depth=20):
+        if parent_subscription is None:
+            return False
+
+        if parent_subscription == current_subscription:
+            return True
+
+        depth -= 1
+
+        if depth == 0:
+            raise RecursionError('Max depth in product inheritance')
+
+        return self.has_purchased_parent(parent_subscription.parent, current_subscription, depth=depth)
 
 
 def get_payment_hex():
