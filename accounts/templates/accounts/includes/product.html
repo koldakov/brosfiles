@@ -22,7 +22,7 @@
     </div>
     <div class="card-footer">
       {% get_product_internal_info product user as product_internal_info %}
-      <div class="text-muted">{{ product_internal_info.message }}</div>
+      <div class="text-muted mb-2">{{ product_internal_info.message }}</div>
       <form id="file-download-form" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <input type="hidden" value="{{ product.id }}" name="product_id"/>
