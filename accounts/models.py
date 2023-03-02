@@ -22,6 +22,7 @@ from accounts.dataclasses import SignedURLReturnObject
 from accounts.enums import SignedURLMethod
 from accounts.managers import UserManager
 from accounts.utils import file_upload_path, get_safe_random_string, get_uuid_hex
+from docs.models import TermsOfService
 
 
 MAGIC_MIME = magic.Magic(mime=True)
@@ -96,6 +97,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         null=True,
         blank=True,
         on_delete=models.CASCADE
+    )
+    terms_of_service = models.ForeignKey(
+        TermsOfService,
+        on_delete=models.CASCADE,
+        related_name='users',
+        null=True,
+        blank=True
     )
 
     objects = UserManager()
