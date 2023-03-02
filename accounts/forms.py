@@ -1,6 +1,7 @@
 from typing import Union
 
 from django import forms
+from django.conf import settings
 from django.contrib.auth import password_validation
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm, UserCreationForm
 from django.core.exceptions import ValidationError
@@ -9,6 +10,7 @@ from django.template.defaultfilters import filesizeformat
 from django.utils.translation import gettext_lazy as _
 
 from accounts.models import DEFAULT_MAX_FILE_SIZE, File, User
+from docs.models import TermsOfService
 
 
 class FileUploadForm(forms.ModelForm):
@@ -174,6 +176,15 @@ class SignUpForm(UserCreationForm):
         ),
         label=_('Confirm password')
     )
+    terms_of_service = forms.BooleanField(
+        widget=forms.CheckboxInput(
+            attrs={
+                'class': 'form-check-input',
+            }
+        ),
+        required=True,
+        initial=False
+    )
 
     class Meta:
         model = User
@@ -184,7 +195,16 @@ class SignUpForm(UserCreationForm):
             'last_name',
             'password1',
             'password2',
+            'terms_of_service',
         )
+
+    def clean_terms_of_service(self) -> TermsOfService:
+        terms_of_service: str = self.cleaned_data['terms_of_service']
+
+        if terms_of_service is False:
+            raise ValidationError('You need to agree on Terms Of Service')
+
+        return TermsOfService.objects.latest()
 
     def clean_username(self) -> str:
         username: str = self.cleaned_data['username']

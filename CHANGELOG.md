@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.17] - 2023-03-03
+
+### Added
+
+- Terms of service required on signup [@AivGitHub](https://github.com/AivGitHub/).
+
 ## [0.0.16] - 2023-03-02
 
 ### Improved
