@@ -62,9 +62,6 @@ class FileUploadForm(forms.ModelForm):
     def clean_file(self) -> [InMemoryUploadedFile, TemporaryUploadedFile]:
         """Cleans file object and returns cleaned file.
 
-        Note:
-            File.allow_upload can't be used here as file is not initialized yet.
-
         Returns:
             django.core.files.uploadedfile.InMemoryUploadedFile: if the file size
                 less than ``django.conf.settings.DATA_UPLOAD_MAX_MEMORY_SIZE``.
