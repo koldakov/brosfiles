@@ -26,7 +26,7 @@ from docs.models import TermsOfService
 
 
 MAGIC_MIME = magic.Magic(mime=True)
-DEFAULT_MAX_FILE_SIZE: int = 100 * 2**20
+DEFAULT_MAX_FILE_SIZE: int = 10485760  # 10 * 2 ^ 20 = 10 MB
 DEFAULT_MAX_STORAGE_SIZE: int = 10737418240  # 10 * 2 ^ 30 = 10 GB
 
 
