@@ -75,7 +75,7 @@ class FileUploadForm(forms.ModelForm):
         max_file_size: int = DEFAULT_MAX_FILE_SIZE
 
         if not self.is_user_anonymous():
-            max_file_size = self.request.user.max_file_size
+            max_file_size = self.request.user.get_max_file_size()
 
         if file.size > max_file_size:
             h_max_file_size: str = filesizeformat(max_file_size)

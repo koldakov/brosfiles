@@ -141,6 +141,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     def email_user(self, subject, message, from_email=None, **kwargs) -> None:
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
+    def get_max_file_size(self):
+        if self.subscription is None:
+            return self.max_file_size
+
+        return self.subscription.max_file_size
+
 
 def get_upload_hex():
     """Generates UUID4 hex for upload_hex field."""
