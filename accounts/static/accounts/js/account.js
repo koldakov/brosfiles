@@ -3,7 +3,7 @@ class File {
     this.form = form;
 
     this.csrfMiddlewareToken = $(this.form).find("input[name='csrfmiddlewaretoken']").val();
-    this.maxFileSize = $(this.form).find("input[name='max_file_size']").val() || 100 * Math.pow(2, 20);
+    this.maxFileSize = $(this.form).find("input[name='max_file_size']").val();
     this.fileInput = $(this.form).find("input[type='file']")[0];
     this.fileUploadButton = $(this.form).find("#file-upload-button");
 

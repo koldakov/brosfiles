@@ -29,7 +29,7 @@
                     <div
                       class="mb-2{% if field.field.widget.input_type == 'checkbox' %} form-check form-switch{% endif %}"
                     >
-                      {% if field.field.widget.input_type != 'file' %}
+                      {% if field.field.widget.input_type != 'file' and not field.is_hidden %}
                         <label for="{{ field.auto_id }}" class="form-label">{{ field.label }}</label>
                       {% endif %}
                       {{ field }}

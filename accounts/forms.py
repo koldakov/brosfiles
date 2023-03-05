@@ -32,6 +32,10 @@ class FileUploadForm(forms.ModelForm):
         required=False,
         initial=True
     )
+    max_file_size = forms.CharField(
+        widget=forms.HiddenInput(),
+        initial=DEFAULT_MAX_FILE_SIZE
+    )
 
     def __init__(self, *args, **kwargs) -> None:
         """Initializes the FileUploadForm.
@@ -58,6 +62,9 @@ class FileUploadForm(forms.ModelForm):
 
         if self.is_user_anonymous():
             self.fields.pop('is_private', None)
+
+        if not self.is_user_anonymous():
+            self.fields['max_file_size'].initial = self.request.user.get_max_file_size()
 
     def clean_file(self) -> [InMemoryUploadedFile, TemporaryUploadedFile]:
         """Cleans file object and returns cleaned file.
