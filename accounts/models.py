@@ -28,6 +28,7 @@ from docs.models import TermsOfService
 MAGIC_MIME = magic.Magic(mime=True)
 DEFAULT_MAX_FILE_SIZE: int = 10485760  # 10 * 2 ^ 20 = 10 MB
 DEFAULT_MAX_STORAGE_SIZE: int = 2147483648  # 2 * 2 ^ 30 = 2 GB
+MIN_FILE_SIZE: int = 0
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -401,6 +402,30 @@ class File(models.Model):
         """
         raise NotImplementedError()
 
+    def generate_post_upload_signed_url(
+            self,
+            expiration: Optional[int] = None,
+            headers: Optional[dict] = None
+            ) -> SignedURLReturnObject:
+        if expiration is None:
+            expiration = self.get_signed_url_expiration(expiration)
+
+        presigned_post = self.file.field.storage.connection.meta.client.generate_presigned_post(
+            Bucket=self.file.storage.bucket_name,
+            Key=self.file.name,
+            Conditions=[
+                ["content-length-range", MIN_FILE_SIZE, self.get_max_file_size()],
+            ],
+            ExpiresIn=expiration,
+        )
+
+        return SignedURLReturnObject(
+            url=presigned_post['url'],
+            headers={},
+            method=SignedURLMethod.POST.value,
+            body=dict(presigned_post['fields'].items())
+        )
+
     def generate_download_signed_url(
             self,
             expiration: Optional[int] = None,
@@ -480,6 +505,12 @@ class File(models.Model):
             return True
 
         return self.owner == user
+
+    def get_max_file_size(self):
+        if self.owner is None:
+            return DEFAULT_MAX_FILE_SIZE
+
+        return self.owner.get_max_file_size()
 
 
 def generate_fake_file(original_name):
