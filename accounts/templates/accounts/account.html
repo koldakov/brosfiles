@@ -25,6 +25,9 @@
               <hr/>
               <form id="file-upload-form" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
+                  <div class="mb-2">
+                    {% translate "Max file size:" %}&nbsp{{ file_upload_form.max_file_size.value | filesizeformat }}
+                  </div>
                   {% for field in file_upload_form %}
                     <div
                       class="mb-2{% if field.field.widget.input_type == 'checkbox' %} form-check form-switch{% endif %}"
