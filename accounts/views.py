@@ -1,5 +1,5 @@
 from datetime import timedelta
-from typing import Optional
+from typing import Optional, Union
 
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
@@ -7,6 +7,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
+from django.http import HttpResponseForbidden
+from django.http.request import HttpHeaders
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils import timezone
@@ -16,6 +18,8 @@ from payments import PaymentStatus
 from payments import get_payment_model, RedirectNeeded
 
 from accounts.dataclasses import SignedURLReturnObject
+from accounts.enums import TransferType
+from accounts.exceptions import NotAllowed
 from accounts.forms import ChangePasswordForm, SignInForm, FileUploadForm, SignUpForm
 from accounts.models import File, Subscription
 
@@ -128,6 +132,8 @@ class Account(View):
     page_size = 12
     # Looks like the max length is 2 ** 8, but 2 ** 6 is big enough
     max_search_length: int = 2 ** 6
+    TRANSFER_TYPE_KEY = 'X-Transfer-Type'
+    SUPPORTED_TRANSFER_TYPES = (TransferType.SIGNED_URL,)
 
     def check_search_length(self, search_query: str):
         if self.max_search_length >= len(search_query):
@@ -198,7 +204,15 @@ class Account(View):
             }
         )
 
-    def post(self, request, *args, **kwargs):
+    def upload(self, request):
+        transfer_type = self._get_transfer_type(request.headers)
+
+        if transfer_type == TransferType.DEFAULT:
+            return self._default_upload(request)
+
+        raise NotAllowed()
+
+    def _default_upload(self, request):
         file_upload_form: FileUploadForm = FileUploadForm(
             data=request.POST,
             files=request.FILES,
@@ -248,6 +262,23 @@ class Account(View):
                 'current_category': current_category,
             }
         )
+
+    def post(self, request, *args, **kwargs):
+        try:
+            return self.upload(request)
+        except NotAllowed:
+            return HttpResponseForbidden()
+
+    def _get_transfer_type(self, headers: HttpHeaders):
+        transfer_type: Union[str, None] = headers.get(self.TRANSFER_TYPE_KEY, None)
+
+        if transfer_type is None:
+            return TransferType.DEFAULT
+
+        if transfer_type.upper() not in [_type.value for _type in self.SUPPORTED_TRANSFER_TYPES]:
+            raise NotAllowed()
+
+        return TransferType[transfer_type.upper()]
 
 
 class FileView(View):
