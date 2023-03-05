@@ -460,7 +460,8 @@ class File(models.Model):
         return SignedURLReturnObject(
             url=url,
             headers=headers,
-            method=method
+            method=method,
+            body={}
         )
 
     def get_h_size(self):

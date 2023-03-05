@@ -10,3 +10,4 @@ class SignedURLReturnObject(DataClassBase):
     url: str
     headers: Union[dict, None]
     method: str
+    body: Union[dict, None]
