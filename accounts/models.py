@@ -513,12 +513,14 @@ class File(models.Model):
         return self.owner.get_max_file_size()
 
 
-def generate_fake_file(original_name):
+def generate_fake_file(original_name, owner: User = None, is_private: bool = True):
     file = File()
 
     file_field = models.FileField(upload_to=file_upload_path(File, original_name), name=original_name)
     field_file = FieldFile(field=file_field, name=file_field.upload_to, instance=models.FileField)
 
+    file.owner = owner
+    file.is_private = is_private
     file.file = field_file
     file.save(fake=True, original_full_name=original_name)
 
