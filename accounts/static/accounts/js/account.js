@@ -12,13 +12,20 @@ class File {
     this.uploadURL = "";
 
     if (this.file.size > this.maxFileSize) {
-      this.fileUploadButton.removeClass("disabled");
+      this.toggleUploadForm();
       throw new Error("File is too large.");
     }
   }
 
+  toggleUploadForm() {
+    let isDisabled = !$(this.form).prop("disabled");
+
+    $(this.form).prop("disabled", isDisabled);
+    $(this.form).find("input, button").prop("disabled", isDisabled);
+  }
+
   upload() {
-    this.fileUploadButton.addClass("disabled");
+    this.toggleUploadForm();
     this.URLUpload();
   }
 
@@ -55,12 +62,12 @@ class File {
         _this.finishURLUpload(token);
       } else {
         console.error(textStatus);
-        _this.fileUploadButton.removeClass("disabled");
+        _this.toggleUploadForm();
       }
     })
     .fail(function (jqXHR, textStatus, errorThrown) {
       console.error(textStatus);
-      _this.fileUploadButton.removeClass("disabled");
+      _this.toggleUploadForm();
     });
   }
 
@@ -84,7 +91,7 @@ class File {
     })
     .fail(function (jqXHR, textStatus, errorThrown) {
       console.error(textStatus);
-      _this.fileUploadButton.removeClass("disabled");
+      _this.toggleUploadForm();
     });
   }
 
@@ -112,7 +119,7 @@ class File {
     })
     .fail(function (jqXHR, textStatus, errorThrown) {
       console.error(textStatus);
-      _this.fileUploadButton.removeClass("disabled");
+      _this.toggleUploadForm();
     });
   }
 }
