@@ -415,6 +415,7 @@ class File(models.Model):
             Key=self.file.name,
             Conditions=[
                 ["content-length-range", MIN_FILE_SIZE, self.get_max_file_size()],
+                {"bucket": self.file.storage.bucket_name},
             ],
             ExpiresIn=expiration,
         )
