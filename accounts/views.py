@@ -7,21 +7,24 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, JsonResponse
 from django.http.request import HttpHeaders
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.translation import gettext as _
 from django.views import View
 from payments import PaymentStatus
 from payments import get_payment_model, RedirectNeeded
 
 from accounts.dataclasses import SignedURLReturnObject
-from accounts.enums import TransferType
+from accounts.enums import TransferType, UploadAction, UploadStatus
 from accounts.exceptions import NotAllowed
 from accounts.forms import ChangePasswordForm, SignInForm, FileUploadForm, SignUpForm
-from accounts.models import File, Subscription
+from accounts.models import File, generate_fake_file, Subscription
+from base.exceptions import FatalSignatureError, SignatureExpiredError
+from base.utils import decode_jwt_signature, generate_jwt_signature
 
 PAYMENT_MODEL = get_payment_model()
 
@@ -134,6 +137,9 @@ class Account(View):
     max_search_length: int = 2 ** 6
     TRANSFER_TYPE_KEY = 'X-Transfer-Type'
     SUPPORTED_TRANSFER_TYPES = (TransferType.SIGNED_URL,)
+    SIGNED_URL_REQUEST_KEY = 'X-Signed-URL-request'
+    UPLOAD_ACTION_KEY = 'X-Upload-Action'
+    UPLOAD_SIGNATURE_KEY = 'X-Upload-Signature'
 
     def check_search_length(self, search_query: str):
         if self.max_search_length >= len(search_query):
@@ -209,8 +215,100 @@ class Account(View):
 
         if transfer_type == TransferType.DEFAULT:
             return self._default_upload(request)
+        elif transfer_type == TransferType.SIGNED_URL:
+            return self._signed_url_upload(request)
 
         raise NotAllowed()
+
+    def _signed_url_upload(self, request):
+        upload_action: str = self.get_header(request.headers, self.UPLOAD_ACTION_KEY)
+
+        if upload_action.upper() == UploadAction.START.value:
+            request_key: str = self.get_header(request.headers, self.SIGNED_URL_REQUEST_KEY)
+
+            return JsonResponse(self.start_signed_url_upload(request.POST, request_key, request.user))
+        elif upload_action.upper() == UploadAction.FINISH.value:
+            signature: str = self.get_header(request.headers, self.UPLOAD_SIGNATURE_KEY)
+
+            return JsonResponse(self.finish_upload_signed_url(signature))
+        else:
+            raise NotAllowed()
+
+    # noinspection PyMethodMayBeStatic
+    def finish_upload_signed_url(self, signature):
+        try:
+            payload = decode_jwt_signature(signature)
+        except (FatalSignatureError, SignatureExpiredError):
+            raise NotAllowed()
+
+        try:
+            upload_hash = payload['upload_hash']
+        except KeyError:
+            raise NotAllowed()
+
+        try:
+            file = File.objects.get(upload_hex=upload_hash)
+        except File.DoesNotExist:
+            raise NotAllowed()
+
+        try:
+            file.save()
+        except FileNotFoundError:
+            raise NotAllowed()
+
+        return {
+            'redirect_url': reverse('accounts:file', kwargs={'url_path': file.url_path}),
+            'status': UploadStatus.DONE.value
+        }
+
+    # noinspection PyMethodMayBeStatic
+    def _cast_check_input_to_bool(self, val):
+        if val == 'true':
+            return True
+        elif val == 'false':
+            return False
+
+        raise NotAllowed()
+
+    def start_signed_url_upload(self, body: dict, request_key: str, user):
+        payload: dict = dict()
+
+        try:
+            filename: str = body['filename']
+        except MultiValueDictKeyError:
+            raise NotAllowed()
+
+        try:
+            is_private: bool = self._cast_check_input_to_bool(body['is_private'])
+        except MultiValueDictKeyError:
+            raise NotAllowed()
+
+        file: File = generate_fake_file(filename, owner=user, is_private=is_private)
+
+        for key, value in body.items():
+            payload[key] = value
+
+        payload.update(
+            {
+                'request_key': request_key,
+                'upload_hash': file.upload_hex,
+                'filename': filename,
+            }
+        )
+
+        token = generate_jwt_signature(payload)
+        upload_signed_return_object = file.generate_post_upload_signed_url()
+
+        return {
+            'status': UploadStatus.PENDING.value,
+            'token': token,
+            'request_data': {
+                'url': upload_signed_return_object.url,
+                'headers': upload_signed_return_object.headers,
+                'method': upload_signed_return_object.method,
+                'body': upload_signed_return_object.body,
+            }
+        }
 
     def _default_upload(self, request):
         file_upload_form: FileUploadForm = FileUploadForm(
@@ -279,6 +377,15 @@ class Account(View):
             raise NotAllowed()
 
         return TransferType[transfer_type.upper()]
+
+    # noinspection PyMethodMayBeStatic
+    def get_header(self, headers, header_key):
+        header_value = headers.get(header_key, None)
+
+        if header_value is None:
+            raise NotAllowed()
+
+        return header_value
 
 
 class FileView(View):

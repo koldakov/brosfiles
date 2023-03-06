@@ -27,20 +27,36 @@ class File {
     let token = res.token;
     let _this = this;
     let formData = new FormData();
+    let body = res.request_data.body;
+    let settings = {}
+
+    // MAGIC: For some reason key must be the first argument
+    for (var key in body) {
+      if (body.hasOwnProperty(key)) {
+        formData.append(key, body[key]);
+      }
+    }
 
     formData.append("file", _this.file, _this.file.name);
 
-    $.ajax({
-      url: res.request_data.url,
-      type: res.request_data.method,
-      data: this.file,
-      headers: headers,
-      cache: false,
-      contentType: false,
-      processData: false
-    })
-    .done(function (data) {
-      _this.finishURLUpload(token);
+    settings = {
+      "url": res.request_data.url,
+      "method": res.request_data.method,
+      "timeout": 0,
+      "processData": false,
+      "mimeType": "multipart/form-data",
+      "contentType": false,
+      "data": formData
+    };
+
+    $.ajax(settings)
+    .done(function (data, textStatus, jqXHR) {
+      if (jqXHR.status === 204) {
+        _this.finishURLUpload(token);
+      } else {
+        console.error(textStatus);
+        _this.fileUploadButton.removeClass("disabled");
+      }
     })
     .fail(function (jqXHR, textStatus, errorThrown) {
       console.error(textStatus);
@@ -88,6 +104,7 @@ class File {
       headers: headers,
       data: {
         filename: _this.file.name,
+        is_private: $(this.form).find("input[name='is_private']").is(':checked')
       },
     })
     .done(function (res) {
@@ -99,3 +116,18 @@ class File {
     });
   }
 }
+
+$(document).ready(function() {
+  $("#file-upload-form").submit(function(event) {
+    event.preventDefault();
+
+    try {
+      let file = new File(event.target);
+      file.upload();
+    } catch(e) {
+      console.error(e);
+      alert(e);
+      return;
+    }
+  });
+});
