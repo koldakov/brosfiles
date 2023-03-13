@@ -199,6 +199,22 @@ else:
     PROJECT_ROBOTS = 'index'
 # [/CEO]
 
+# Email
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+DEFAULT_FROM_EMAIL = ENV.get_value('DEFAULT_FROM_EMAIL')
+
+EMAIL_HOST_USER = ENV.get_value('EMAIL_HOST_USER')
+
+EMAIL_HOST_PASSWORD = ENV.get_value('EMAIL_HOST_PASSWORD')
+
+EMAIL_HOST = ENV.get_value('EMAIL_HOST')
+
+EMAIL_PORT = 587
+
+EMAIL_USE_TLS = True
+
 # Payments
 PAYMENT_HOST = ENV.get_value('BF_PAYMENT_HOST')
 

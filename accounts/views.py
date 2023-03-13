@@ -1,6 +1,7 @@
 from datetime import timedelta
 from typing import Optional, Union
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -10,6 +11,7 @@ from django.core.paginator import Paginator
 from django.http import HttpResponseForbidden, JsonResponse
 from django.http.request import HttpHeaders
 from django.shortcuts import redirect, render
+from django.template.loader import get_template
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
@@ -22,7 +24,7 @@ from accounts.dataclasses import SignedURLReturnObject
 from accounts.enums import TransferType, UploadAction, UploadStatus
 from accounts.exceptions import NotAllowed
 from accounts.forms import ChangePasswordForm, SignInForm, FileUploadForm, SignUpForm
-from accounts.models import File, generate_fake_file, Subscription
+from accounts.models import File, generate_fake_file, Subscription, User
 from base.exceptions import FatalSignatureError, SignatureExpiredError
 from base.utils import decode_jwt_signature, generate_jwt_signature
 
@@ -443,6 +445,7 @@ class FileView(View):
 
 class SignUpView(View):
     template = 'accounts/auth/signup.html'
+    ACTIVATION_TOKEN_EXPIRATION = 7200  # 2 hours
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
@@ -467,8 +470,9 @@ class SignUpView(View):
         )
 
         if signup_form.is_valid():
-            signup_form.save()
-            messages.success(request, _('%s, you can sign in now!' % signup_form.cleaned_data.get('username')))
+            user: User = signup_form.save()
+            message: str = self.process_signed_up_user(user)
+            messages.success(request, message)
 
             return redirect(reverse('accounts:signin'))
 
@@ -479,6 +483,29 @@ class SignUpView(View):
                 'signup_form': signup_form
             }
         )
+
+    def process_signed_up_user(self, user: User) -> str:
+        if user.is_active:
+            return _('%s, you can sign in now!' % user.username)
+
+        token = generate_jwt_signature({
+            'username': user.username
+        }, expiration_time=self.ACTIVATION_TOKEN_EXPIRATION)
+        url = '%s%s' % (settings.PAYMENT_HOST, reverse('accounts:email_activation', kwargs={
+            'token': token
+        }))
+        message = get_template('accounts/auth/email_confirmation.html').render({
+            'url': url
+        })
+
+        # We can move functionality to signals, but for now I'm not sure.
+        user.email_user(
+            _('Welcome! Please verify your email'),
+            message,
+            settings.DEFAULT_FROM_EMAIL
+        )
+
+        return _('%s, Verify your email!' % user.username)
 
 
 class SigInView(LoginView):
@@ -511,7 +538,11 @@ class SigInView(LoginView):
                 login(request, user)
                 return redirect(reverse('accounts:index'))
 
-        messages.error(request, _('Invalid username or password.'))
+        msg = _('Invalid username or password.')
+        if not request.user.is_active:
+            msg = _('Please activate your profile!')
+
+        messages.error(request, msg)
 
         return render(
             request=request,
@@ -694,5 +725,46 @@ class SettingsView(LoginRequiredMixin, View):
             template_name=self.template_name,
             context={
                 'change_password_form': change_password_form,
+            }
+        )
+
+
+class EmailActivationView(View):
+    template_name = 'accounts/auth/email_activation.html'
+
+    def get(self, request, *args, **kwargs):
+        try:
+            token = kwargs['token']
+        except KeyError:
+            return redirect(reverse('accounts:index'))
+
+        try:
+            payload = decode_jwt_signature(token)
+        except FatalSignatureError:
+            return redirect(reverse('accounts:index'))
+        except SignatureExpiredError:
+            raise PermissionDenied()
+
+        try:
+            username = payload['username']
+        except KeyError:
+            return redirect(reverse('accounts:index'))
+
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return redirect(reverse('accounts:index'))
+
+        if user.is_active:
+            return redirect(reverse('accounts:index'))
+
+        user.is_active = True
+        user.save(update_fields=['is_active'])
+
+        return render(
+            request,
+            template_name=self.template_name,
+            context={
+                'user': user
             }
         )

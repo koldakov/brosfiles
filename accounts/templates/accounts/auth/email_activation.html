@@ -1,0 +1,31 @@
+{% extends "accounts/base_site.html" %}
+
+{% load extras i18n static %}
+
+{% block extrascript %}
+  <script src="{% static 'accounts/js/account.js' %}?v={% get_setting 'project_build_hash' %}"></script>
+{% endblock %}
+
+{% block page_title %}
+  {% translate "Congratulations!" %}
+{% endblock %}
+
+{% block container %}
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="row">
+        <div class="col-12">
+          <div class="card overflow-auto">
+            <div class="card-body">
+              <h5 class="card-title">{% translate "Congratulations!" %}</h5>
+              <hr/>
+              <p>
+                {{ user.username }},&nbsp{% translate "You can Sign in now!" %}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

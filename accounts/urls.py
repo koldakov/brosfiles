@@ -3,6 +3,7 @@ from django.urls import path
 
 from accounts.views import (
     Account,
+    EmailActivationView,
     FileView,
     PaymentCallbackView,
     ProcessPaymentView,
@@ -26,4 +27,5 @@ urlpatterns = [
     path('products/', ProductsView.as_view(), name='products'),
     path('callbacks/<str:payment_status>/', PaymentCallbackView.as_view()),
     path('settings/', SettingsView.as_view(), name='settings'),
+    path('activations/<str:token>/activate/', EmailActivationView.as_view(), name='email_activation'),
 ]
