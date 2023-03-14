@@ -193,10 +193,9 @@ class Account(View):
         search_query: str = request.GET.get('q', None)
 
         current_category: dict = self.get_current_category(category)
-        cond: dict = self.get_condition(request.user, current_category, search_query=search_query)
 
         paginator: Paginator = Paginator(
-            File.objects.filter(**cond),
+            self.get_related_files(request.user, current_category, search_query),
             self.page_size
         )
         files: Paginator = paginator.get_page(request.GET.get('page'))
@@ -344,10 +343,9 @@ class Account(View):
         search_query: str = request.GET.get('q', None)
 
         current_category: dict = self.get_current_category(category)
-        cond: dict = self.get_condition(request.user, current_category, search_query=search_query)
 
         paginator: Paginator = Paginator(
-            File.objects.filter(**cond),
+            self.get_related_files(request.user, current_category, search_query),
             self.page_size
         )
         files: Paginator = paginator.get_page(request.GET.get('page'))
@@ -389,6 +387,11 @@ class Account(View):
 
         return header_value
 
+    def get_related_files(self, user: User, category: dict, query: str):
+        cond: dict = self.get_condition(user, category, query)
+
+        return File.objects.filter(**cond).exclude(size__isnull=True)
+
 
 class FileView(View):
     template_name = 'accounts/file.html'
@@ -401,7 +404,7 @@ class FileView(View):
             return redirect(reverse('accounts:index'))
 
         try:
-            file = File.objects.get(url_path=url_path)
+            file = self.get_related_file(url_path)
         except File.DoesNotExist:
             return redirect(reverse('accounts:index'))
 
@@ -425,7 +428,7 @@ class FileView(View):
             return redirect(reverse('accounts:index'))
 
         try:
-            file = File.objects.get(url_path=url_path)
+            file = self.get_related_file(url_path)
         except File.DoesNotExist:
             return redirect(reverse('accounts:index'))
 
@@ -441,6 +444,10 @@ class FileView(View):
                 'expiration': timedelta(seconds=expiration),
             }
         )
+
+    @staticmethod
+    def get_related_file(url_path):
+        return File.objects.exclude(size__isnull=True).get(url_path=url_path)
 
 
 class SignUpView(View):
