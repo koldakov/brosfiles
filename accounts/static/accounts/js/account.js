@@ -12,7 +12,6 @@ class File {
     this.uploadURL = "";
 
     if (this.file.size > this.maxFileSize) {
-      this.toggleUploadForm();
       throw new Error("File is too large.");
     }
   }
