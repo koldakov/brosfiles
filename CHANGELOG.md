@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.23] - 2023-03-15
+
+### Fixed
+
+- Upload files for anonymous users [@AivGitHub](https://github.com/AivGitHub/).
+
+### Improved
+
+- Increase max upload size for anonymous user [@AivGitHub](https://github.com/AivGitHub/).
+
 ## [0.0.22] - 2023-03-13
 
 ### Improved
