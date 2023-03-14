@@ -284,7 +284,8 @@ class Account(View):
         except MultiValueDictKeyError:
             raise NotAllowed()
 
-        file: File = generate_fake_file(filename, owner=user, is_private=is_private)
+        owner = user if not user.is_anonymous else None
+        file: File = generate_fake_file(filename, owner=owner, is_private=is_private)
 
         for key, value in body.items():
             payload[key] = value
