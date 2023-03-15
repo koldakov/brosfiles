@@ -532,19 +532,10 @@ class SigInView(LoginView):
         )
 
     def post(self, request, *args, **kwargs):
-        signin_form: SignInForm = SignInForm(
-            data=request.POST
-        )
-
+        signin_form: SignInForm = SignInForm(data=request.POST)
         if signin_form.is_valid():
-            username = signin_form.cleaned_data.get('username')
-            password = signin_form.cleaned_data.get('password')
-
-            user = authenticate(username=username, password=password)
-
-            if user is not None:
-                login(request, user)
-                return redirect(reverse('accounts:index'))
+            self.form_valid(signin_form)
+            return redirect(reverse('accounts:index'))
 
         msg = _('Invalid username or password.')
         if not request.user.is_active:
