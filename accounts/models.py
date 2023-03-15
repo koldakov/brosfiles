@@ -62,8 +62,9 @@ class User(AbstractBaseUser, PermissionsMixin):
             'unique': _('A user with that email already exists.'),
         },
         default=None,
-        null=True,
-        blank=True
+        null=False,
+        blank=False,
+        unique=True
     )
     is_staff = models.BooleanField(
         _('Staff status'),
