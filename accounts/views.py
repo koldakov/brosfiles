@@ -538,9 +538,6 @@ class SigInView(LoginView):
             return redirect(reverse('accounts:index'))
 
         msg = _('Invalid username or password.')
-        if not request.user.is_active:
-            msg = _('Please activate your profile!')
-
         messages.error(request, msg)
 
         return render(
