@@ -221,6 +221,7 @@ class SignUpForm(UserCreationForm):
     def save(self, commit=True):
         user = super(SignUpForm, self).save(commit=False)
 
+        user.is_active = False
         if commit:
             user.save()
 
