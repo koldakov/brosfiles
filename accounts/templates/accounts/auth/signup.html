@@ -19,53 +19,53 @@
             <div class="card-body">
               <h5 class="card-title">{% translate "Sign up" %}</h5>
               <hr/>
-                <form id="signup-form" method="POST">
-                  {% csrf_token %}
-                  {% if messages %}
+              <form id="signup-form" method="POST">
+                {% csrf_token %}
+                {% if messages %}
+                  <div class="mb-2">
+                    <ul class="list-group">
+                      {% for message in messages %}
+                        <li
+                          class="list-group-item list-group-item-{% if message.tags == 'success' %}{{ message.tags }}{% else %}danger{% endif %}"
+                        >
+                          {{ message }}
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                {% endif %}
+                {% for field in signup_form %}
+                  <div class="mb-2">
+                    {% if field.name == "terms_of_service" %}
+                      {{ field }}
+                      <label for="{{ field.auto_id }}" class="form-label">
+                        {% translate "I accept" %}&nbsp{% get_setting "project_title" %}
+                        <a href="{% url 'docs:terms_of_service' %}" target="_blank">
+                          {% translate "Terms of Service" %}
+                        </a>
+                      </label>
+                    {% else %}
+                      <label for="{{ field.auto_id }}" class="form-label">{{ field.label }}</label>
+                      {{ field }}
+                    {% endif %}
+                    {% if field.help_text %}
+                      <small class="form-text text-muted">{{ field.help_text }}</small>
+                    {% endif %}
+                  </div>
+                  {% if field.errors %}
                     <div class="mb-2">
                       <ul class="list-group">
-                        {% for message in messages %}
-                          <li
-                            class="list-group-item list-group-item-{% if message.tags == 'success' %}{{ message.tags }}{% else %}danger{% endif %}"
-                          >
-                            {{ message }}
-                          </li>
+                        {% for error in field.errors %}
+                          <li class="list-group-item list-group-item-danger">{{ error }}</li>
                         {% endfor %}
                       </ul>
                     </div>
                   {% endif %}
-                  {% for field in signup_form %}
-                    <div class="mb-2">
-                      {% if field.name == "terms_of_service" %}
-                        {{ field }}
-                        <label for="{{ field.auto_id }}" class="form-label">
-                          {% translate "I accept" %}&nbsp{% get_setting "project_title" %}
-                          <a href="{% url 'docs:terms_of_service' %}" target="_blank">
-                            {% translate "Terms of Service" %}
-                          </a>
-                        </label>
-                      {% else %}
-                        <label for="{{ field.auto_id }}" class="form-label">{{ field.label }}</label>
-                        {{ field }}
-                      {% endif %}
-                      {% if field.help_text %}
-                        <small class="form-text text-muted">{{ field.help_text }}</small>
-                      {% endif %}
-                    </div>
-                    {% if field.errors %}
-                      <div class="mb-2">
-                        <ul class="list-group">
-                          {% for error in field.errors %}
-                            <li class="list-group-item list-group-item-danger">{{ error }}</li>
-                          {% endfor %}
-                        </ul>
-                      </div>
-                    {% endif %}
-                  {% endfor %}
-                  <button id="file-upload-button" class="btn btn-secondary" type="submit">
-                    {% translate "Sign up" %}
-                  </button>
-                </form>
+                {% endfor %}
+                <button id="file-upload-button" class="btn btn-secondary" type="submit">
+                  {% translate "Sign up" %}
+                </button>
+              </form>
             </div>
           </div>
         </div>
