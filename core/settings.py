@@ -211,7 +211,7 @@ EMAIL_HOST_PASSWORD = ENV.get_value('EMAIL_HOST_PASSWORD')
 
 EMAIL_HOST = ENV.get_value('EMAIL_HOST')
 
-EMAIL_PORT = 587
+EMAIL_PORT = ENV.get_value('EMAIL_PORT', cast=int, default=587)
 
 EMAIL_USE_TLS = True
 
