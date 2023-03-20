@@ -1,6 +1,5 @@
 from hashlib import sha256
 from pathlib import Path
-import secrets
 from typing import Optional
 
 from django.conf import settings

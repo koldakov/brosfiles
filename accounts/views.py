@@ -1,9 +1,9 @@
 from datetime import timedelta
-from typing import Optional, Union
+from typing import Union
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.core.exceptions import PermissionDenied
@@ -11,7 +11,7 @@ from django.core.paginator import Paginator
 from django.http import HttpResponseForbidden, JsonResponse
 from django.http.request import HttpHeaders
 from django.shortcuts import redirect, render
-from django.template.loader import get_template, render_to_string
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
