@@ -11,10 +11,11 @@ from django.core.paginator import Paginator
 from django.http import HttpResponseForbidden, JsonResponse
 from django.http.request import HttpHeaders
 from django.shortcuts import redirect, render
-from django.template.loader import get_template
+from django.template.loader import get_template, render_to_string
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
+from django.utils.html import strip_tags
 from django.utils.translation import gettext as _
 from django.views import View
 from payments import PaymentStatus
@@ -502,15 +503,15 @@ class SignUpView(View):
         url = '%s%s' % (settings.PAYMENT_HOST, reverse('accounts:email_activation', kwargs={
             'token': token
         }))
-        message = get_template('accounts/auth/email_confirmation.html').render({
-            'url': url
-        })
+        html_message = render_to_string('accounts/auth/email_confirmation.html', {'url': url})
+        message = strip_tags(html_message)
 
         # We can move functionality to signals, but for now I'm not sure.
         user.email_user(
             _('Welcome! Please verify your email'),
             message,
-            settings.DEFAULT_FROM_EMAIL
+            settings.DEFAULT_FROM_EMAIL,
+            html_message=html_message
         )
 
         return _('%s, Verify your email!' % user.username)
