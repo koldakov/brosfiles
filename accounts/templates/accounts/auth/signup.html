@@ -21,6 +21,19 @@
               <hr/>
                 <form id="signup-form" method="POST">
                   {% csrf_token %}
+                  {% if messages %}
+                    <div class="mb-2">
+                      <ul class="list-group">
+                        {% for message in messages %}
+                          <li
+                            class="list-group-item list-group-item-{% if message.tags == 'success' %}{{ message.tags }}{% else %}danger{% endif %}"
+                          >
+                            {{ message }}
+                          </li>
+                        {% endfor %}
+                      </ul>
+                    </div>
+                  {% endif %}
                   {% for field in signup_form %}
                     <div class="mb-2">
                       {% if field.name == "terms_of_service" %}

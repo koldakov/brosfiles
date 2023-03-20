@@ -550,7 +550,7 @@ class SigInView(LoginView):
         )
 
 
-class ProductsView(LoginRequiredMixin, View):
+class ProductsView(View):
     template_name = 'accounts/products.html'
 
     def get(self, request, *args, **kwargs):
@@ -566,6 +566,10 @@ class ProductsView(LoginRequiredMixin, View):
         )
 
     def post(self, request, *args, **kwargs):
+        if request.user.is_anonymous:
+            messages.success(request, _('Please sign up first!'))
+            return redirect(reverse('accounts:signup'))
+
         product_id = request.POST.get('product_id')
 
         if product_id is None:

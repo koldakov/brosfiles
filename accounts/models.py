@@ -620,6 +620,13 @@ class Subscription(ProductBase):
         is_available: bool = True
         is_current: bool = False
 
+        if user.is_anonymous:
+            return {
+                'is_available': is_available,
+                'message': msg,
+                'is_current': is_current,
+            }
+
         if self == user.subscription:
             msg = _('This product already yours!')
             is_available = False
