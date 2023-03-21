@@ -86,6 +86,19 @@
                   </ul>
                 </div>
                 <hr/>
+                {% if messages %}
+                  <div class="mb-2">
+                    <ul class="list-group">
+                      {% for message in messages %}
+                        <li
+                          class="list-group-item list-group-item-{% if message.tags == 'success' %}{{ message.tags }}{% else %}danger{% endif %}"
+                        >
+                          {{ message }}
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                {% endif %}
                 {% if files %}
                   {% include "accounts/includes/pagination.html" with obj=files %}
                   <div class="row row-cols-1 row-cols-md-3 g-4">
