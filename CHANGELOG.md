@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.29] - 2023-03-21
+
+### Added
+
+- Download files from index page [@AivGitHub](https://github.com/AivGitHub/).
+- Delete files [@AivGitHub](https://github.com/AivGitHub/).
+
 ## [0.0.28] - 2023-03-20
 
 ### Added

@@ -40,6 +40,23 @@
             {% endif %}
           </form>
         </li>
+        {% if not request.user.is_anonymous %}
+          <li class="list-group-item">
+            <form
+              action="{% url 'accounts:file' url_path=file.url_path %}"
+              id="file-delete-form"
+              method="POST"
+              enctype="multipart/form-data"
+            >
+              {% csrf_token %}
+              <input type="hidden" value="{{ file.url_path }}" name="url_path"/>
+              <input type="hidden" value="delete" name="action"/>
+              <button id="file-delete-button" class="btn btn-danger" type="submit">
+                {% translate "Delete file" %}
+              </button>
+            </form>
+          </li>
+        {% endif %}
       </ul>
     </div>
     <div class="card-footer">
