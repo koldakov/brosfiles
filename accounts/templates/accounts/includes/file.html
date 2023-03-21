@@ -25,6 +25,7 @@
           >
             {% csrf_token %}
             <input type="hidden" value="{{ file.url_path }}" name="url_path"/>
+            <input type="hidden" value="download" name="action"/>
             {% if not upload_url %}
               <button id="file-download-button" class="btn btn-warning" type="submit">
                 {% translate "Generate download link" %}

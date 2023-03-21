@@ -424,6 +424,7 @@ class FileView(View):
         )
 
     def post(self, request, *args, **kwargs):
+        action = request.POST.get('action')
         url_path = kwargs.get('url_path')
 
         if url_path is None:
@@ -434,6 +435,12 @@ class FileView(View):
         except File.DoesNotExist:
             return redirect(reverse('accounts:index'))
 
+        if action == 'download':
+            return self.handle_download(request, file)
+
+        raise PermissionDenied()
+
+    def handle_download(self, request, file: File):
         expiration = self.ONE_HOUR
         signed_url_object: SignedURLReturnObject = file.generate_download_signed_url(expiration=expiration)
 
