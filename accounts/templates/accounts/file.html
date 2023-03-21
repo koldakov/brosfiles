@@ -8,37 +8,6 @@
 
 {% block container %}
   <div class="row">
-    <div class="col">
-      <div class="card h-100">
-        <div class="card-body">
-          <h5 class="card-title">
-            {{ file.original_full_name }}
-          </h5>
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item"><i class="fa-solid fa-file-code"></i>&nbsp{{ file.size | filesizeformat }}</li>
-            <li class="list-group-item"><i class="fa-solid fa-file"></i>&nbsp{{ file.content_type }}</li>
-          </ul>
-          <form id="file-download-form" method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            <input type="hidden" value="{{ file.url_path }}" name="url_path"/>
-            {% if not upload_url %}
-              <button id="file-download-button" class="btn btn-warning" type="submit">
-                {% translate "Generate download link" %}
-              </button>
-            {% else %}
-              <a href="{{ upload_url }}" class="btn btn-success mb-3" role="button" target="_blank">
-                {% translate "Download file" %}
-              </a>
-              <div>
-               {% translate "Download link will expire in" %} {{ expiration }} {% translate "hours" %}
-              </div>
-            {% endif %}
-          </form>
-        </div>
-        <div class="card-footer">
-          <small class="text-muted">{% translate "Uploaded date" %}: {{ file.date_uploaded }}</small>
-        </div>
-      </div>
-    </div>
+    {% include "accounts/includes/file.html" with file=file %}
   </div>
 {% endblock %}

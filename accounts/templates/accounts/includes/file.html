@@ -16,6 +16,29 @@
             <i class="fa-solid fa-lock-open"></i>&nbsp{% translate "File is public" %}
           {% endif %}
         </li>
+        <li class="list-group-item">
+          <form
+            action="{% url 'accounts:file' url_path=file.url_path %}"
+            id="file-download-form"
+            method="POST"
+            enctype="multipart/form-data"
+          >
+            {% csrf_token %}
+            <input type="hidden" value="{{ file.url_path }}" name="url_path"/>
+            {% if not upload_url %}
+              <button id="file-download-button" class="btn btn-warning" type="submit">
+                {% translate "Generate download link" %}
+              </button>
+            {% else %}
+              <a href="{{ upload_url }}" class="btn btn-success mb-3" role="button" target="_blank">
+                {% translate "Download file" %}
+              </a>
+              <div>
+               {% translate "Download link will expire in" %} {{ expiration }} {% translate "hours" %}
+              </div>
+            {% endif %}
+          </form>
+        </li>
       </ul>
     </div>
     <div class="card-footer">
