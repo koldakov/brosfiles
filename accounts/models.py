@@ -7,6 +7,7 @@ from django.contrib.auth.models import (
     AbstractBaseUser,
     PermissionsMixin,
 )
+from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.db import models
 from django.db.models.fields.files import FieldFile
@@ -512,6 +513,18 @@ class File(models.Model):
             return DEFAULT_MAX_FILE_SIZE
 
         return self.owner.get_max_file_size()
+
+    @staticmethod
+    def get_user_file_by_url_path(user: User, url_path):
+        try:
+            file = File.objects.get(url_path=url_path)
+        except File.DoesNotExist:
+            raise PermissionDenied()
+
+        if file.is_user_has_access(user):
+            return file
+
+        raise PermissionDenied()
 
 
 def generate_fake_file(original_name, owner: User = None, is_private: bool = True):
