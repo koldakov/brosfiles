@@ -437,6 +437,8 @@ class FileView(View):
 
         if action == 'download':
             return self.handle_download(request, file)
+        elif action == 'delete':
+            return self.handle_delete(request, file)
 
         raise PermissionDenied()
 
@@ -454,9 +456,41 @@ class FileView(View):
             }
         )
 
+    def handle_delete(self, request, file: File):
+        return redirect(reverse('accounts:file_delete', kwargs={'url_path': file.url_path}))
+
     @staticmethod
     def get_related_file(url_path):
         return File.objects.exclude(size__isnull=True).get(url_path=url_path)
+
+
+class FileDeleteView(View):
+    template_name = 'accounts/delete_confirmation.html'
+
+    def get(self, request, *args, **kwargs):
+        url_path = kwargs.get('url_path')
+        if url_path is None or not request.user.is_authenticated:
+            raise PermissionDenied()
+
+        return render(
+            request=request,
+            template_name=self.template_name,
+            context={
+                'file': File.get_user_file_by_url_path(request.user, url_path),
+            }
+        )
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            raise PermissionDenied()
+
+        url_path = kwargs.get('url_path')
+        file = File.get_user_file_by_url_path(request.user, url_path)
+        file_name = file.original_full_name
+
+        file.delete()
+        messages.success(request, _('File "%s" deleted' % file_name))
+        return redirect(reverse('accounts:index'))
 
 
 class SignUpView(View):
