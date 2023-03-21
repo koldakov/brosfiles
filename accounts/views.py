@@ -472,11 +472,15 @@ class FileDeleteView(View):
         if url_path is None or not request.user.is_authenticated:
             raise PermissionDenied()
 
+        file = File.get_user_file_by_url_path(request.user, url_path)
+        if not file.has_delete_permission(request.user):
+            raise PermissionDenied()
+
         return render(
             request=request,
             template_name=self.template_name,
             context={
-                'file': File.get_user_file_by_url_path(request.user, url_path),
+                'file': file,
             }
         )
 
@@ -486,8 +490,10 @@ class FileDeleteView(View):
 
         url_path = kwargs.get('url_path')
         file = File.get_user_file_by_url_path(request.user, url_path)
-        file_name = file.original_full_name
+        if not file.has_delete_permission(request.user):
+            raise PermissionDenied()
 
+        file_name = file.original_full_name
         file.delete()
         messages.success(request, _('File "%s" deleted' % file_name))
         return redirect(reverse('accounts:index'))

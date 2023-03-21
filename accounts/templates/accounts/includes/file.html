@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load accounts_extras i18n %}
 
 <div class="col">
   <div class="card h-100">
@@ -40,7 +40,8 @@
             {% endif %}
           </form>
         </li>
-        {% if not request.user.is_anonymous %}
+        {% user_has_file_delete_permission file request.user as does_user_have_file_delete_permission %}
+        {% if does_user_have_file_delete_permission %}
           <li class="list-group-item">
             <form
               action="{% url 'accounts:file' url_path=file.url_path %}"

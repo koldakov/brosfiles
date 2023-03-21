@@ -526,6 +526,12 @@ class File(models.Model):
 
         raise PermissionDenied()
 
+    def has_delete_permission(self, user: User):
+        if self.owner is None:
+            return False
+
+        return self.owner == user
+
 
 def generate_fake_file(original_name, owner: User = None, is_private: bool = True):
     file = File()
