@@ -118,7 +118,7 @@
                                 target="_blank"
                                 style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; display: inline-block;"
                               >
-                                {% translate "Verify your email address" %}
+                                {{ url_message }}
                               </a>
                           </td>
                         </tr>
@@ -128,21 +128,21 @@
                 </table>
               </td>
             </tr>
-            <tr>
-              <td
-                bgcolor="#ffffff"
-                align="left"
-                style="padding: 0px 30px 20px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;"
-              >
-                <p style="margin: 0;">
-                  {% translate "You're almost there! Click the button above to verify your email." %}
-                </p>
-                <p>
-                  {% translate "This link will expire in 2 hours and can only be used once." %}
-                </p>
-              </td>
-            </tr>
-
+            {% if p_messages %}
+              <tr>
+                <td
+                  bgcolor="#ffffff"
+                  align="left"
+                  style="padding: 0px 30px 20px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;"
+                >
+                  {% for msg in p_messages %}
+                    <p style="margin: 0;">
+                      {{ msg }}
+                    </p>
+                  {% endfor %}
+                </td>
+              </tr>
+            {% endif %}
           </table>
         </td>
       </tr>
