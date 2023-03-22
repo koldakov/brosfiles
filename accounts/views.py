@@ -550,7 +550,7 @@ class SignUpView(View):
         url = '%s%s' % (settings.PAYMENT_HOST, reverse('accounts:email_activation', kwargs={
             'token': token
         }))
-        html_message = render_to_string('accounts/auth/email_confirmation.html', {'url': url})
+        html_message = render_to_string('accounts/auth/email_message.html', {'url': url})
         message = strip_tags(html_message)
 
         # We can move functionality to signals, but for now I'm not sure.
