@@ -816,6 +816,23 @@ class EmailActivationView(View):
 
         user.is_active = True
         user.save(update_fields=['is_active'])
+        context = {
+            'p_messages': [
+                _('Congratulations! You can Sign in now.'),
+                _('Greetings from %s Family!' % settings.PROJECT_TITLE),
+            ],
+            'url_message': _('Go back Home!'),
+            'url': settings.PAYMENT_HOST,
+        }
+        html_message = render_to_string('accounts/auth/email_message.html', context=context)
+        message = strip_tags(html_message)
+
+        user.email_user(
+            _('Thank you for email confirm!'),
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            html_message=html_message
+        )
 
         return render(
             request,
