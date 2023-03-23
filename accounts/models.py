@@ -26,7 +26,7 @@ from docs.models import TermsOfService
 
 
 MAGIC_MIME = magic.Magic(mime=True)
-DEFAULT_MAX_FILE_SIZE: int = 209715200  # 200 * 2 ^ 20 = 200 MB
+DEFAULT_MAX_FILE_SIZE: int = 209715200  # Maximum file size200 * 2 ^ 20 = 200 MB
 DEFAULT_MAX_STORAGE_SIZE: int = 2147483648  # 2 * 2 ^ 30 = 2 GB
 MIN_FILE_SIZE: int = 0
 
@@ -620,7 +620,7 @@ class ProductBase(models.Model):
 
 
 class Subscription(ProductBase):
-    max_file_size = models.PositiveIntegerField(
+    max_file_size = models.PositiveBigIntegerField(
         _('Maximum file size'),
         default=DEFAULT_MAX_FILE_SIZE,
         null=True,
