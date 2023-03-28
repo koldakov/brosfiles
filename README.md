@@ -52,6 +52,10 @@ To run unit tests:
 
 For migrations, add `BF_ADMIN_USERNAME` and `BF_ADMIN_PASSWORD` to virtual environment to create admin user.
 
+## Stripe
+
+For a webhook you need to configure stripe settings in a dashboard.
+
 ## Notes
 
 ### Methodology
