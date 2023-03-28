@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.33] - 2023-03-28
+
+### Added
+
+- Temporary remove payments [@AivGitHub](https://github.com/AivGitHub/).
+
 ## [0.0.32] - 2023-03-23
 
 ### Improved
