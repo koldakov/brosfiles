@@ -70,7 +70,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # 3rd party apps
-    'payments',
     'fontawesomefree',
     # Custom apps
     'accounts',
@@ -219,16 +218,8 @@ EMAIL_USE_TLS = True
 # Payments
 PAYMENT_HOST = ENV.get_value('BF_PAYMENT_HOST')
 
-PAYMENT_MODEL = 'accounts.Payment'
-
 PAYMENT_USES_SSL = DEBUG
 
-PAYMENT_VARIANTS = {
-    'default': (
-        'payments.stripe.StripeProvider',
-        {
-            'public_key': ENV.get_value('STRIPE_PUBLIC_KEY'),
-            'secret_key': ENV.get_value('STRIPE_SECRET_KEY'),
-        }
-    )
-}
+STRIPE_PUBLIC_KEY = ENV.get_value('STRIPE_PUBLIC_KEY')
+STRIPE_SECRET_KEY = ENV.get_value('STRIPE_SECRET_KEY')
+STRIPE_ENDPOINT_SECRET = ENV.get_value('STRIPE_ENDPOINT_SECRET')

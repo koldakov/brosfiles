@@ -13,13 +13,10 @@ from django.http.request import HttpHeaders
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse
-from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.html import strip_tags
 from django.utils.translation import gettext as _
 from django.views import View
-from payments import PaymentStatus
-from payments import get_payment_model, RedirectNeeded
 
 from accounts.dataclasses import SignedURLReturnObject
 from accounts.enums import TransferType, UploadAction, UploadStatus
@@ -28,8 +25,6 @@ from accounts.forms import ChangePasswordForm, SignInForm, FileUploadForm, SignU
 from accounts.models import File, generate_fake_file, Subscription, User
 from base.exceptions import FatalSignatureError, SignatureExpiredError
 from base.utils import decode_jwt_signature, generate_jwt_signature
-
-PAYMENT_MODEL = get_payment_model()
 
 
 BOOK_CONTENT_TYPES = (
@@ -635,120 +630,24 @@ class ProductsView(View):
         except Subscription.DoesNotExist:
             raise PermissionDenied()
 
-        payment = PAYMENT_MODEL.objects.create(
-            variant='default',
-            total=product.price,
-            currency=product.currency,
-            customer_ip_address=request.META.get('REMOTE_ADDR', ''),
-            billing_email=request.user.email,
-            client=request.user,
-            product=product
-        )
-
-        return redirect(
-            reverse(
-                'accounts:process_payment',
-                kwargs={
-                    'payment_hex': payment.payment_hex
-                }
-            )
-        )
+        raise PermissionDenied()
 
 
 class ProcessPaymentView(LoginRequiredMixin, View):
     template_name = 'accounts/payment.html'
-    ALLOWED_STATUSES = (
-        PaymentStatus.INPUT,
-        PaymentStatus.PREAUTH,
-        PaymentStatus.WAITING,
-    )
-
-    def get_payment(self, payment_hex):
-        try:
-            payment = PAYMENT_MODEL.objects.get(payment_hex=payment_hex)
-        except PAYMENT_MODEL.DoesNotExist:
-            raise PermissionDenied()
-
-        if payment.status not in self.ALLOWED_STATUSES:
-            raise PermissionDenied()
-
-        return payment
 
     def get(self, request, *args, **kwargs):
-        payment_hex = kwargs.get('payment_hex')
-
-        if payment_hex is None:
-            raise PermissionDenied()
-
-        payment = self.get_payment(payment_hex)
-
-        form = payment.get_form()
-
-        return render(
-            request,
-            template_name=self.template_name,
-            context={
-                'form': form,
-                'payment': payment,
-            }
-        )
+        raise PermissionDenied()
 
     def post(self, request, *args, **kwargs):
-        payment_hex = kwargs.get('payment_hex')
-
-        if payment_hex is None:
-            raise PermissionDenied()
-
-        payment = self.get_payment(payment_hex)
-
-        try:
-            form = payment.get_form(data=request.POST)
-        except RedirectNeeded as redirect_link:
-            return redirect('%s' % redirect_link)
-
-        return render(
-            request,
-            template_name=self.template_name,
-            context={
-                'form': form,
-                'payment': payment,
-            }
-        )
+        raise PermissionDenied()
 
 
 class PaymentCallbackView(LoginRequiredMixin, View):
     template_name = 'accounts/callbacks/payment.html'
-    ALLOWED_PAYMENT_STATUSES = ('success', 'failure',)
-    EXPIRATION_TIME = 60 * 30
-
-    def is_payment_expired(self, payment):
-        return payment.created + timedelta(seconds=self.EXPIRATION_TIME) < timezone.now()
 
     def get(self, request, *args, **kwargs):
-        payment_status = kwargs.get('payment_status')
-        payment_hex = request.GET.get('ph')
-
-        if payment_hex is None or payment_status not in self.ALLOWED_PAYMENT_STATUSES:
-            raise PermissionDenied()
-
-        try:
-            payment = PAYMENT_MODEL.objects.get(payment_hex=payment_hex)
-        except PAYMENT_MODEL.DoesNotExist:
-            raise PermissionDenied()
-
-        if self.is_payment_expired(payment):
-            raise PermissionDenied()
-
-        payment.configure_user()
-
-        return render(
-            request,
-            template_name=self.template_name,
-            context={
-                'payment': payment,
-                'is_success': payment_status == 'success',
-            }
-        )
+        raise PermissionDenied()
 
 
 class SettingsView(LoginRequiredMixin, View):

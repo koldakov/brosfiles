@@ -13,10 +13,9 @@ from django.db import models
 from django.db.models.fields.files import FieldFile
 from django.template.defaultfilters import filesizeformat
 from django.utils import timezone
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy as _, pgettext_lazy
 import magic
-from payments import PaymentStatus
-from payments.models import BasePayment
+from phonenumber_field.modelfields import PhoneNumberField
 
 from accounts.dataclasses import SignedURLReturnObject
 from accounts.enums import SignedURLMethod
@@ -679,6 +678,83 @@ def get_payment_hex():
     return get_uuid_hex(Payment, 'payment_hex')
 
 
+class PaymentStatus:
+    WAITING = 'waiting'
+    PREAUTH = 'preauth'
+    CONFIRMED = 'confirmed'
+    REJECTED = 'rejected'
+    REFUNDED = 'refunded'
+    ERROR = 'error'
+    INPUT = "input"
+
+    CHOICES = [
+        (WAITING, pgettext_lazy('payment status', 'Waiting for confirmation')),
+        (PREAUTH, pgettext_lazy('payment status', 'Pre-authorized')),
+        (CONFIRMED, pgettext_lazy('payment status', 'Confirmed')),
+        (REJECTED, pgettext_lazy('payment status', 'Rejected')),
+        (REFUNDED, pgettext_lazy('payment status', 'Refunded')),
+        (ERROR, pgettext_lazy('payment status', 'Error')),
+        (INPUT, pgettext_lazy('payment status', 'Input')),
+    ]
+
+
+class FraudStatus:
+    UNKNOWN = 'unknown'
+    ACCEPT = 'accept'
+    REJECT = 'reject'
+    REVIEW = 'review'
+
+    CHOICES = [
+        (UNKNOWN, pgettext_lazy('fraud status', 'Unknown')),
+        (ACCEPT, pgettext_lazy('fraud status', 'Passed')),
+        (REJECT, pgettext_lazy('fraud status', 'Rejected')),
+        (REVIEW, pgettext_lazy('fraud status', 'Review')),
+    ]
+
+
+class BasePayment(models.Model):
+    variant = models.CharField(max_length=255)
+    status = models.CharField(
+        max_length=10, choices=PaymentStatus.CHOICES, default=PaymentStatus.WAITING
+    )
+    fraud_status = models.CharField(
+        _('fraud check'),
+        max_length=10,
+        choices=FraudStatus.CHOICES,
+        default=FraudStatus.UNKNOWN,
+    )
+    fraud_message = models.TextField(blank=True, default='')
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+    transaction_id = models.CharField(max_length=255, blank=True)
+    currency = models.CharField(max_length=10)
+    total = models.DecimalField(max_digits=9, decimal_places=2, default='0.0')
+    delivery = models.DecimalField(max_digits=9, decimal_places=2, default='0.0')
+    tax = models.DecimalField(max_digits=9, decimal_places=2, default='0.0')
+    description = models.TextField(blank=True, default='')
+    billing_first_name = models.CharField(max_length=256, blank=True)
+    billing_last_name = models.CharField(max_length=256, blank=True)
+    billing_address_1 = models.CharField(max_length=256, blank=True)
+    billing_address_2 = models.CharField(max_length=256, blank=True)
+    billing_city = models.CharField(max_length=256, blank=True)
+    billing_postcode = models.CharField(max_length=256, blank=True)
+    billing_country_code = models.CharField(max_length=2, blank=True)
+    billing_country_area = models.CharField(max_length=256, blank=True)
+    billing_email = models.EmailField(blank=True)
+    billing_phone = PhoneNumberField(blank=True)
+    customer_ip_address = models.GenericIPAddressField(blank=True, null=True)
+    extra_data = models.TextField(blank=True, default='')
+    message = models.TextField(blank=True, default='')
+    token = models.CharField(max_length=36, blank=True, default='')
+    captured_amount = models.DecimalField(max_digits=9, decimal_places=2, default='0.0')
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return self.variant
+
+
 class Payment(BasePayment):
     payment_hex = models.CharField(
         _('Payment hex'),
@@ -711,9 +787,6 @@ class Payment(BasePayment):
         return 'https://%s/accounts/callbacks/success/?ph=%s' % (settings.PAYMENT_HOST, self.payment_hex)
 
     def configure_user(self):
-        if self.status != PaymentStatus.CONFIRMED:
-            return
-
         self.client.subscription = self.product
 
         self.client.save()

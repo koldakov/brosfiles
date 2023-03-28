@@ -8,7 +8,6 @@ charset-normalizer==2.1.1
 currencies==2020.12.12
 Django==4.1.3
 django-environ==0.9.0
-django-payments==1.0.0
 django-phonenumber-field==7.0.2
 django-storages==1.13.1
 fontawesomefree==6.3.0
