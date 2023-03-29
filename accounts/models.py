@@ -97,6 +97,20 @@ class User(AbstractBaseUser, PermissionsMixin):
         null=True,
         blank=True
     )
+    psp_reference = models.CharField(
+        _('PSP ID'),
+        max_length=32,
+        editable=False,
+        null=True,
+        blank=True
+    )
+    psp_id = models.CharField(
+        _('PSP ID'),
+        max_length=32,
+        editable=False,
+        null=True,
+        blank=True
+    )
 
     objects = UserManager()
 
