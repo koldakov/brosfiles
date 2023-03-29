@@ -1,12 +1,12 @@
 from django import template
 
-from accounts.models import File, ProductBase, User
+from accounts.models import File, User
 
 register = template.Library()
 
 
 @register.simple_tag
-def get_product_internal_info(product: ProductBase, user: User):
+def get_product_internal_info(product, user: User):
     return product.get_internal_info(user)
 
 

@@ -75,6 +75,7 @@ INSTALLED_APPS = [
     'accounts',
     'base',
     'docs',
+    'payments',
 ]
 
 MIDDLEWARE = [

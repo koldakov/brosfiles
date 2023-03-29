@@ -4,7 +4,7 @@
 
 {% block extraaside %}
   <li class="nav-item">
-    <a class="nav-link{% if url_name == 'products' %} collapsed{% endif %}" href="{% url 'accounts:products' %}">
+    <a class="nav-link{% if url_name == 'products' %} collapsed{% endif %}" href="{% url 'payments:products' %}">
       <i class="fa-solid fa-database"></i>
       <span>{% translate "Products" %}</span>
     </a>

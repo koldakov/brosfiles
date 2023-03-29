@@ -25,7 +25,6 @@ from docs.models import TermsOfService
 
 MAGIC_MIME = magic.Magic(mime=True)
 DEFAULT_MAX_FILE_SIZE: int = 209715200  # Maximum file size200 * 2 ^ 20 = 200 MB
-DEFAULT_MAX_STORAGE_SIZE: int = 2147483648  # 2 * 2 ^ 30 = 2 GB
 MIN_FILE_SIZE: int = 0
 
 
@@ -91,13 +90,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         null=True,
         blank=True
     )
-    subscription = models.ForeignKey(
-        'accounts.Subscription',
-        related_name='clients',
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE
-    )
     terms_of_service = models.ForeignKey(
         TermsOfService,
         on_delete=models.CASCADE,
@@ -142,10 +134,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
     def get_max_file_size(self):
-        if self.subscription is None:
-            return self.max_file_size
-
-        return self.subscription.max_file_size
+        return self.max_file_size
 
 
 def get_upload_hex():
@@ -543,110 +532,3 @@ def generate_fake_file(original_name, owner: User = None, is_private: bool = Tru
     file.save(fake=True, original_full_name=original_name)
 
     return file
-
-
-class ProductBase(models.Model):
-    title = models.CharField(
-        _('Title'),
-        max_length=128,
-        editable=True,
-        null=False,
-        blank=False
-    )
-    description = models.TextField(
-        _('Description'),
-        editable=True,
-        null=True,
-        blank=True
-    )
-    price = models.DecimalField(
-        _('Price'),
-        max_digits=16,
-        decimal_places=2,
-        editable=True,
-        null=True,
-        blank=True
-    )
-    sku = models.CharField(
-        _('SKU'),
-        max_length=16,
-        editable=True,
-        null=True,
-        blank=True
-    )
-    currency = models.CharField(
-        _('Currency'),
-        max_length=8,
-        editable=True,
-        null=False,
-        blank=False
-    )
-    parent = models.ForeignKey(
-        'self',
-        null=True,
-        blank=True,
-        related_name='children',
-        on_delete=models.CASCADE
-    )
-
-    def get_internal_info(self, user: User):
-        raise NotImplementedError()
-
-    class Meta:
-        abstract = True
-        ordering = ['id']
-
-
-class Subscription(ProductBase):
-    max_file_size = models.PositiveBigIntegerField(
-        _('Maximum file size'),
-        default=DEFAULT_MAX_FILE_SIZE,
-        null=True,
-        blank=True
-    )
-    storage_size = models.PositiveBigIntegerField(
-        _('Storage size'),
-        default=DEFAULT_MAX_STORAGE_SIZE,
-        null=True,
-        blank=True
-    )
-
-    def get_internal_info(self, user: User):
-        msg: str = _('Product is available!')
-        is_available: bool = True
-        is_current: bool = False
-
-        if user.is_anonymous:
-            return {
-                'is_available': is_available,
-                'message': msg,
-                'is_current': is_current,
-            }
-
-        if self == user.subscription:
-            msg = _('This product already yours!')
-            is_available = False
-            is_current = True
-        elif self.has_purchased_parent(self.parent, user.subscription):
-            msg = _('You have much advanced subscription!')
-            is_available = False
-
-        return {
-            'is_available': is_available,
-            'message': msg,
-            'is_current': is_current,
-        }
-
-    def has_purchased_parent(self, parent_subscription, current_subscription, depth=20):
-        if parent_subscription is None:
-            return False
-
-        if parent_subscription == current_subscription:
-            return True
-
-        depth -= 1
-
-        if depth == 0:
-            raise RecursionError('Max depth in product inheritance')
-
-        return self.has_purchased_parent(parent_subscription.parent, current_subscription, depth=depth)

@@ -22,7 +22,7 @@ from accounts.dataclasses import SignedURLReturnObject
 from accounts.enums import TransferType, UploadAction, UploadStatus
 from accounts.exceptions import NotAllowed
 from accounts.forms import ChangePasswordForm, SignInForm, FileUploadForm, SignUpForm
-from accounts.models import File, generate_fake_file, Subscription, User
+from accounts.models import File, generate_fake_file, User
 from base.exceptions import FatalSignatureError, SignatureExpiredError
 from base.utils import decode_jwt_signature, generate_jwt_signature
 
@@ -598,56 +598,6 @@ class SigInView(LoginView):
                 'signin_form': signin_form
             }
         )
-
-
-class ProductsView(View):
-    template_name = 'accounts/products.html'
-
-    def get(self, request, *args, **kwargs):
-        # TODO: Don't do like this
-        products = Subscription.objects.all()
-
-        return render(
-            request,
-            template_name=self.template_name,
-            context={
-                'products': products,
-            }
-        )
-
-    def post(self, request, *args, **kwargs):
-        if request.user.is_anonymous:
-            messages.success(request, _('Please sign up first!'))
-            return redirect(reverse('accounts:signup'))
-
-        product_id = request.POST.get('product_id')
-
-        if product_id is None:
-            raise PermissionDenied()
-
-        try:
-            product = Subscription.objects.get(id=product_id)
-        except Subscription.DoesNotExist:
-            raise PermissionDenied()
-
-        raise PermissionDenied()
-
-
-class ProcessPaymentView(LoginRequiredMixin, View):
-    template_name = 'accounts/payment.html'
-
-    def get(self, request, *args, **kwargs):
-        raise PermissionDenied()
-
-    def post(self, request, *args, **kwargs):
-        raise PermissionDenied()
-
-
-class PaymentCallbackView(LoginRequiredMixin, View):
-    template_name = 'accounts/callbacks/payment.html'
-
-    def get(self, request, *args, **kwargs):
-        raise PermissionDenied()
 
 
 class SettingsView(LoginRequiredMixin, View):

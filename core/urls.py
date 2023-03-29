@@ -30,6 +30,7 @@ urlpatterns = [
     path('robots.txt', TemplateView.as_view(template_name='base/robots.txt', content_type='text/plain'), name='robots'),
     path('docs/', include('docs.urls')),
     path('api/', include('api.urls')),
+    path('payments/', include('payments.urls')),
 ]
 
 

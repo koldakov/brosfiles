@@ -10,7 +10,7 @@
   {{ block.super }}
   {% with request.resolver_match.url_name as url_name %}
   <li class="nav-item">
-    <a class="nav-link{% if url_name == 'process_payment' %} collapsed{% endif %}" href="{% url 'accounts:products' %}">
+    <a class="nav-link{% if url_name == 'process_payment' %} collapsed{% endif %}" href="{% url 'payments:products' %}">
       <i class="fa-solid fa-money-check-dollar"></i>
       <span>{% translate "Payments" %}</span>
     </a>

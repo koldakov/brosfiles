@@ -6,9 +6,6 @@ from accounts.views import (
     EmailActivationView,
     FileDeleteView,
     FileView,
-    PaymentCallbackView,
-    ProcessPaymentView,
-    ProductsView,
     SettingsView,
     SigInView,
     SignUpView
@@ -25,9 +22,6 @@ urlpatterns = [
     path('signup/', SignUpView.as_view(), name='signup'),
     path('signin/', SigInView.as_view(), name='signin'),
     path('logout/', LogoutView.as_view(template_name='accounts/auth/logout.html'), name='logout'),
-    path('payments/<str:payment_hex>/process/', ProcessPaymentView.as_view(), name='process_payment'),
-    path('products/', ProductsView.as_view(), name='products'),
-    path('callbacks/<str:payment_status>/', PaymentCallbackView.as_view()),
     path('settings/', SettingsView.as_view(), name='settings'),
     path('activations/<str:token>/activate/', EmailActivationView.as_view(), name='email_activation'),
 ]

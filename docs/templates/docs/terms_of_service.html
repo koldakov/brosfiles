@@ -6,7 +6,7 @@
   {% with request.resolver_match.url_name as url_name %}
     {% if user.is_authenticated %}
       <li class="nav-item">
-        <a class="nav-link{% if url_name == 'products' %} collapsed{% endif %}" href="{% url 'accounts:products' %}">
+        <a class="nav-link{% if url_name == 'products' %} collapsed{% endif %}" href="{% url 'payments:products' %}">
           <i class="fa-solid fa-database"></i>
           <span>{% translate "Products" %}</span>
         </a>
