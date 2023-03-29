@@ -3,7 +3,6 @@
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-import phonenumber_field.modelfields
 
 
 class Migration(migrations.Migration):
@@ -49,7 +48,7 @@ class Migration(migrations.Migration):
                 ('billing_country_code', models.CharField(blank=True, max_length=2)),
                 ('billing_country_area', models.CharField(blank=True, max_length=256)),
                 ('billing_email', models.EmailField(blank=True, max_length=254)),
-                ('billing_phone', phonenumber_field.modelfields.PhoneNumberField(blank=True, max_length=128, region=None)),
+                ('billing_phone', models.CharField(blank=True, max_length=128)),
                 ('customer_ip_address', models.GenericIPAddressField(blank=True, null=True)),
                 ('extra_data', models.TextField(blank=True, default='')),
                 ('message', models.TextField(blank=True, default='')),
