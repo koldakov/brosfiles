@@ -20,7 +20,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
 
-from accounts.models import File, Payment, ProductItemPoint, Subscription, User
+from accounts.models import File, ProductItemPoint, Subscription, User
 
 
 csrf_protect_m = method_decorator(csrf_protect)
@@ -298,11 +298,6 @@ class UserAdmin(admin.ModelAdmin):
             request.POST['_continue'] = 1
 
         return super().response_add(request, obj, post_url_continue)
-
-
-@admin.register(Payment)
-class PaymentAdmin(admin.ModelAdmin):
-    pass
 
 
 @admin.register(Subscription)
