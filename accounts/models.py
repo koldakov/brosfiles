@@ -545,22 +545,6 @@ def generate_fake_file(original_name, owner: User = None, is_private: bool = Tru
     return file
 
 
-class ProductItemPoint(models.Model):
-    short_description = models.CharField(
-        _('Short description'),
-        max_length=128,
-        editable=True,
-        null=False,
-        blank=False
-    )
-    description = models.TextField(
-        _('Description'),
-        editable=True,
-        null=False,
-        blank=False
-    )
-
-
 class ProductBase(models.Model):
     title = models.CharField(
         _('Title'),
@@ -603,10 +587,6 @@ class ProductBase(models.Model):
         blank=True,
         related_name='children',
         on_delete=models.CASCADE
-    )
-    item_points = models.ManyToManyField(
-        ProductItemPoint,
-        blank=True
     )
 
     def get_internal_info(self, user: User):

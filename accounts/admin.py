@@ -20,7 +20,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
 
-from accounts.models import File, ProductItemPoint, Subscription, User
+from accounts.models import File, Subscription, User
 
 
 csrf_protect_m = method_decorator(csrf_protect)
@@ -302,9 +302,4 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(ProductItemPoint)
-class ProductItemPointAdmin(admin.ModelAdmin):
     pass
