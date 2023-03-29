@@ -47,6 +47,9 @@ class ProductBase(models.Model):
         abstract = True
         ordering = ['id']
 
+    def get_internal_info(self, user):
+        raise NotImplementedError()
+
 
 class Subscription(ProductBase):
     DEFAULT_MAX_STORAGE_SIZE: int = 2147483648  # 2 * 2 ^ 30 = 2 GB

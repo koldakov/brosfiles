@@ -20,7 +20,7 @@
               {% if products %}
                 <div class="row row-cols-1 row-cols-md-3 g-4">
                   {% for product in products %}
-                    {% include "accounts/includes/product.html" with product=product %}
+                    {% include "payments/includes/product.html" with product=product %}
                   {% endfor %}
                 </div>
               {% else %}

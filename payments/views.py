@@ -10,7 +10,7 @@ from payments.models import Subscription
 
 
 class ProductsView(View):
-    template_name = 'accounts/products.html'
+    template_name = 'payments/products.html'
 
     def get(self, request, *args, **kwargs):
         # TODO: Don't do like this
@@ -43,7 +43,7 @@ class ProductsView(View):
 
 
 class ProcessPaymentView(LoginRequiredMixin, View):
-    template_name = 'accounts/payment.html'
+    template_name = 'payments/payment.html'
 
     def get(self, request, *args, **kwargs):
         raise PermissionDenied()
@@ -53,7 +53,7 @@ class ProcessPaymentView(LoginRequiredMixin, View):
 
 
 class PaymentCallbackView(LoginRequiredMixin, View):
-    template_name = 'accounts/callbacks/payment.html'
+    template_name = 'payments/callbacks/payment.html'
 
     def get(self, request, *args, **kwargs):
         raise PermissionDenied()
