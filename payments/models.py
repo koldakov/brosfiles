@@ -42,6 +42,20 @@ class ProductBase(models.Model):
         _('Active'),
         default=False
     )
+    psp_reference = models.CharField(
+        _('PSP ID'),
+        max_length=32,
+        editable=False,
+        null=True,
+        blank=True
+    )
+    psp_id = models.CharField(
+        _('PSP ID'),
+        max_length=32,
+        editable=False,
+        null=True,
+        blank=True
+    )
 
     class Meta:
         abstract = True
