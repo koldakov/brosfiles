@@ -54,6 +54,6 @@ def get_field_verbose_name(instance: Type[models.Model], field_name: str):
 
 @register.simple_tag
 def get_price_for_product(product):
-    currency = Currency(product.currency)
+    currency = Currency(product.currency.upper())
 
     return currency.get_money_format(product.price)
