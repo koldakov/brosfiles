@@ -150,6 +150,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_max_file_size(self):
         return self.max_file_size
 
+    def configure_from_event(self, event):
+        if event.data.object.customer:
+            self.psp_id = event.data.object.customer
+            self.save(update_fields=['psp_id'])
+
 
 def get_upload_hex():
     """Generates UUID4 hex for upload_hex field."""
