@@ -1,0 +1,27 @@
+{% extends "accounts/base_site.html" %}
+
+{% load extras i18n static %}
+
+{% block page_title %}
+  {% translate "Products" %}
+{% endblock %}
+
+{% block container %}
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">
+                {% translate "Congratulations!" %}
+              </h5>
+              <hr/>
+              <p>{% translate "You've bought" %} {{ price.product.name }} {% translate "product!" %}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

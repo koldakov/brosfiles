@@ -6,16 +6,22 @@
   <div class="card h-100">
     <div class="card-body">
       <h5 class="card-title">
-        {{ product.title }}{% if product_internal_info.is_current %}&nbsp|&nbsp({% translate "Current" %}){% endif %}
+        {{ product.name }}
       </h5>
       <hr />
-      <div class="mb-2">
-        {{ product.description }}
-      </div>
+      {% if product.description %}
+        <div class="mb-2">
+          {{ product.description }}
+        </div>
+      {% endif %}
       <div class="mb-2">
         <ul>
-          <li>{% translate "Max upload file size" %}:&nbsp{{ product.max_file_size | filesizeformat }}</li>
-          <li>{% translate "Storage size" %}:&nbsp{{ product.storage_size | filesizeformat }}</li>
+          {% if product.metadata.max_file_size %}
+            <li>{% translate "Max upload file size" %}:&nbsp{{ product.metadata.max_file_size | filesizeformat }}</li>
+          {% endif %}
+          {% if product.metadata.storage_size %}
+            <li>{% translate "Storage size" %}:&nbsp{{ product.metadata.storage_size | filesizeformat }}</li>
+          {% endif %}
           {% for point in product.item_points.all %}
             <li>{{ point.description }}</li>
           {% endfor %}
@@ -23,17 +29,24 @@
       </div>
     </div>
     <div class="card-footer">
-      <div class="text-muted mb-2">{{ product_internal_info.message }}</div>
+      {% if product_internal_info.info %}
+        <div class="text-muted mb-2">{{ product_internal_info.info }}</div>
+      {% endif %}
       <form id="file-download-form" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <input type="hidden" value="{{ product.id }}" name="product_id"/>
+        {% if price.id %}
+          <input type="hidden" value="{{ price.id }}" name="price_id"/>
+        {% endif %}
         <button
-          id="file-download-button"
+          id="product-purchase-button"
           class="btn btn-success"
           type="submit"
-          {% if not product_internal_info.is_available %}disabled{% endif %}
+          {% if not product.is_available %}disabled{% endif %}
         >
-          {% translate "Buy for" %}&nbsp{% get_price_for_product product %}&nbsp/&nbsp{% translate "month" %}
+          {# TODO: Method to detect recurring payments #}
+          {% translate "From" %} {% get_hprice price %} {{ price.currency }}
+          {% if price.recurring.interval %} / per {{ price.recurring.interval_count }} {{ price.recurring.interval }}{% endif %}
         </button>
       </form>
     </div>

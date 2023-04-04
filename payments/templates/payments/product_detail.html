@@ -14,14 +14,14 @@
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">
-                {% translate "Products" %}
+                {% translate "Product" %} {{ product.name}}
               </h5>
               <hr/>
-              {% if products %}
+              {% if product %}
                 <div class="row row-cols-1 row-cols-md-3 g-4">
-                  {% for product in products %}
-                    {% if product.active and product.prices.all %}
-                      {% include "payments/includes/product.html" with product=product  price=product.prices.all.0 %}
+                  {% for price in product.prices.all %}
+                    {% if price.active %}
+                      {% include "payments/includes/product.html" with product=product %}
                     {% endif %}
                   {% endfor %}
                 </div>
