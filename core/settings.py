@@ -71,6 +71,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # 3rd party apps
     'fontawesomefree',
+    'rest_framework',
     # Custom apps
     'accounts',
     'base',
@@ -224,3 +225,10 @@ PAYMENT_USES_SSL = DEBUG
 STRIPE_PUBLIC_KEY = ENV.get_value('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = ENV.get_value('STRIPE_SECRET_KEY')
 STRIPE_ENDPOINT_SECRET = ENV.get_value('STRIPE_ENDPOINT_SECRET')
+
+REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'api.exception_handlers.api_exception_handler',
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+}
