@@ -17,3 +17,11 @@ class AuthenticationFailedException(BaseCustomException):
         if detail is None:
             detail = 'Not authenticated'
         super().__init__(detail=detail, code=status.HTTP_401_UNAUTHORIZED)
+
+
+class FeatureNotReady(BaseCustomException):
+    def __init__(self, detail=None):
+        if detail is None:
+            detail = 'Not implemented'
+        # Should be ``status.HTTP_501_NOT_IMPLEMENTED``, but webhook requires 200-299 response code.
+        super().__init__(detail=detail, code=status.HTTP_200_OK)
