@@ -96,8 +96,11 @@ class FileAdmin(admin.ModelAdmin):
 class UserAdmin(admin.ModelAdmin):
     add_form_template = 'admin/auth/user/add_form.html'
     change_user_password_template = None
+    readonly_fields = (
+        'psp_reference',
+    )
     fieldsets = (
-        (None, {'fields': ('username', 'password')}),
+        (None, {'fields': ('username', 'password', 'psp_reference',)}),
         (_('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
         (
             _('Permissions'),
