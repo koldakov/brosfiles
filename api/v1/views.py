@@ -14,6 +14,6 @@ class StripeWebhook(APIView):
 
     def post(self, request, *args, **kwargs):
         service = StripeWebhookService(request.auth)
-        service.procces_post_request()
+        service.process_post_request()
 
         return Response(status=status.HTTP_200_OK)

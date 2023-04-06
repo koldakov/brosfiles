@@ -6,7 +6,7 @@ class StripeWebhookService:
     def __init__(self, event: stripe.Event):
         self.event = event
 
-    def procces_post_request(self):
+    def process_post_request(self):
         if self.event.type == 'checkout.session.completed':
             self.checkout_session_completed()
         elif self.event.type == 'invoice.payment_succeeded':
