@@ -549,6 +549,7 @@ class SignUpView(View):
             'p_messages': [
                 _("You're almost there! Click the button above to verify your email."),
                 _('This link will expire in 2 hours and can only be used once.'),
+                _('If the button above does not work copy and paste url: %s.' % url),
             ],
             'url_message': _('Verify your email address'),
             'url': url,
@@ -669,6 +670,7 @@ class EmailActivationView(View):
             'p_messages': [
                 _('Congratulations! You can Sign in now.'),
                 _('Greetings from %s Family!' % settings.PROJECT_TITLE),
+                _('If the button above does not work copy and paste url: %s.' % settings.PAYMENT_HOST),
             ],
             'url_message': _('Go back Home!'),
             'url': settings.PAYMENT_HOST,
