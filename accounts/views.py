@@ -210,9 +210,7 @@ class Account(View):
     def upload(self, request):
         transfer_type = self._get_transfer_type(request.headers)
 
-        if transfer_type == TransferType.DEFAULT:
-            return self._default_upload(request)
-        elif transfer_type == TransferType.SIGNED_URL:
+        if transfer_type == TransferType.SIGNED_URL:
             return self._signed_url_upload(request)
 
         raise NotAllowed()

@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.38] - 2023-04-11
+
+### Added
+
+- Check and display storage size [@AivGitHub](https://github.com/AivGitHub/).
+- Disable file upload without JavaScript [@AivGitHub](https://github.com/AivGitHub/).
+
+### Fixed
+
+- Show actual upload size limit.
+
 ## [0.0.37] - 2023-04-07
 
 ### Added
