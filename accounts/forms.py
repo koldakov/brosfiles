@@ -9,7 +9,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUpload
 from django.template.defaultfilters import filesizeformat
 from django.utils.translation import gettext_lazy as _
 
-from accounts.models import DEFAULT_MAX_FILE_SIZE, File, User
+from accounts.models import DEFAULT_MAX_FILE_SIZE, DEFAULT_STORAGE_SIZE, File, User, UserDoesNotHaveSubscription
 from docs.models import TermsOfService
 
 
@@ -35,6 +35,10 @@ class FileUploadForm(forms.ModelForm):
     max_file_size = forms.CharField(
         widget=forms.HiddenInput(),
         initial=DEFAULT_MAX_FILE_SIZE
+    )
+    storage_size = forms.CharField(
+        widget=forms.HiddenInput(),
+        initial=DEFAULT_STORAGE_SIZE
     )
 
     def __init__(self, *args, **kwargs) -> None:
@@ -63,8 +67,17 @@ class FileUploadForm(forms.ModelForm):
         if self.is_user_anonymous():
             self.fields.pop('is_private', None)
 
-        if not self.is_user_anonymous():
-            self.fields['max_file_size'].initial = self.request.user.get_max_file_size()
+        if self.is_user_anonymous():
+            return
+
+        try:
+            metadata = self.request.user.get_subscription_metadata()
+        except UserDoesNotHaveSubscription:
+            # User Does not have active subscriptions.
+            return
+
+        self.fields['max_file_size'].initial = metadata['max_file_size']
+        self.fields['storage_size'].initial = metadata['storage_size']
 
     def clean_file(self) -> [InMemoryUploadedFile, TemporaryUploadedFile]:
         """Cleans file object and returns cleaned file.

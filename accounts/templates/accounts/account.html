@@ -28,6 +28,13 @@
                   <div class="mb-2">
                     {% translate "Max file size:" %}&nbsp{{ file_upload_form.max_file_size.value | filesizeformat }}
                   </div>
+                  {% if not request.user.is_anonymous %}
+                    <div class="mb-2">
+                      {{ request.user.get_used_storage | filesizeformat}}
+                      /
+                      {% translate "Storage size:" %}&nbsp{{ file_upload_form.storage_size.value | filesizeformat }}
+                    </div>
+                  {% endif %}
                   {% for field in file_upload_form %}
                     <div
                       class="mb-2{% if field.field.widget.input_type == 'checkbox' %} form-check form-switch{% endif %}"

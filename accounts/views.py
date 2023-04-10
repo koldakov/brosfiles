@@ -274,6 +274,14 @@ class Account(View):
             filename: str = body['filename']
         except MultiValueDictKeyError:
             raise NotAllowed()
+        try:
+            file_size: str = body['file_size']
+        except MultiValueDictKeyError:
+            raise NotAllowed()
+        try:
+            actual_file_size = int(file_size)
+        except (ValueError, TypeError):
+            raise NotAllowed()
 
         try:
             is_private: bool = self._cast_check_input_to_bool(body['is_private'])
@@ -281,6 +289,13 @@ class Account(View):
             raise NotAllowed()
 
         owner = user if not user.is_anonymous else None
+        # Dirty hack for those, who reads my source code:
+        # In theory you can replace uploaded file after starts signed upload and before finalising upload,
+        # because in content-length-range for now file_size is not passed.
+        # I can't rely on JS and 100% be sure, that the sizes will be similar.
+        # TODO: Check size calculation on client/backend sides.
+        if owner is not None and not owner.is_file_size_allowed(actual_file_size):
+            raise NotAllowed()
         file: File = generate_fake_file(filename, owner=owner, is_private=is_private)
 
         for key, value in body.items():

@@ -4,6 +4,7 @@ class File {
 
     this.csrfMiddlewareToken = $(this.form).find("input[name='csrfmiddlewaretoken']").val();
     this.maxFileSize = $(this.form).find("input[name='max_file_size']").val();
+    this.maxStorageSize = $(this.form).find("input[name='storage_size']").val();
     this.fileInput = $(this.form).find("input[type='file']")[0];
     this.fileUploadButton = $(this.form).find("#file-upload-button");
 
@@ -110,6 +111,7 @@ class File {
       headers: headers,
       data: {
         filename: _this.file.name,
+        file_size: _this.file.size,
         is_private: $(this.form).find("input[name='is_private']").is(':checked')
       },
     })

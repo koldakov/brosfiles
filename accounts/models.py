@@ -25,7 +25,16 @@ from docs.models import TermsOfService
 
 MAGIC_MIME = magic.Magic(mime=True)
 DEFAULT_MAX_FILE_SIZE: int = 209715200  # Maximum file size200 * 2 ^ 20 = 200 MB
+DEFAULT_STORAGE_SIZE: int = 2147483648  # 2 * 2 ^ 30 = 2 GB
 MIN_FILE_SIZE: int = 0
+
+
+class UserDoesNotHaveSubscription(Exception):
+    """User does not have subscription."""
+
+
+class MetadataFieldDoesNotExist(Exception):
+    """Field of the metadata does not exist."""
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -165,9 +174,45 @@ class User(AbstractBaseUser, PermissionsMixin):
         except ObjectDoesNotExist:
             return self.max_file_size
         try:
-            return metadata['max_file_size']
+            max_file_size = metadata['max_file_size']
         except KeyError:
             return self.max_file_size
+        try:
+            return int(max_file_size)
+        except (ValueError, TypeError):
+            return self.max_file_size
+
+    def get_subscription_metadata(self):
+        """Gets metadata for the subscription.
+
+        In theory, we can get not the latest subscriptions, but get subscriptions with maximum
+        storage size and max upload file size, but for now that's fine.
+        Plus I have not decided how to handle multiple subscriptions and if we need them at all.
+
+        Returns:
+            django.db.models.JSONField: If user has an active subscription.
+
+        Raises:
+            accounts.models.UserDoesNotHaveSubscription: If user does not have an active subscription.
+        """
+        try:
+            # That's a difficult operation.
+            # TODO: Caching.
+            return self.subscriptions.filter(active=True).latest('id').product.metadata
+        except ObjectDoesNotExist:
+            raise UserDoesNotHaveSubscription()
+
+    def get_used_storage(self):
+        space = self.files.exclude(size=None).values_list('size', flat=True).aggregate(used_storage=models.Sum('size'))
+        return space['used_storage'] or 0
+
+    def is_file_size_allowed(self, file_size: int):
+        try:
+            metadata = self.get_subscription_metadata()
+        except UserDoesNotHaveSubscription:
+            metadata = dict(storage_size=DEFAULT_STORAGE_SIZE)
+        storage_size = int(metadata['storage_size'])
+        return file_size + self.get_used_storage() < storage_size
 
     def configure_from_event(self, event):
         if event.data.object.customer:
