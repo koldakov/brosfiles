@@ -7,7 +7,7 @@ from django.contrib.auth.models import (
     AbstractBaseUser,
     PermissionsMixin,
 )
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.core.mail import send_mail
 from django.db import models
 from django.db.models.fields.files import FieldFile
@@ -148,7 +148,26 @@ class User(AbstractBaseUser, PermissionsMixin):
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
     def get_max_file_size(self):
-        return self.max_file_size
+        """Retrieves maximum upload file size.
+
+        Each ``payments.models.Subscription`` has a ``payments.models.Product``, each product has
+        metadata field and max_file_size inside it.
+        If the  user bought a subscription this value will be returned and
+        ``self.max_file_size`` otherwise.
+
+        Return:
+            int: Maximum upload file size.
+        """
+        try:
+            # That's a difficult operation.
+            # TODO: Caching.
+            metadata = self.subscriptions.filter(active=True).latest('id').product.metadata
+        except ObjectDoesNotExist:
+            return self.max_file_size
+        try:
+            return metadata['max_file_size']
+        except KeyError:
+            return self.max_file_size
 
     def configure_from_event(self, event):
         if event.data.object.customer:
