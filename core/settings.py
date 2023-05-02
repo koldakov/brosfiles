@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     # 3rd party apps
     'fontawesomefree',
     'rest_framework',
+    'corsheaders',
     # Custom apps
     'accounts',
     'base',
@@ -82,12 +83,15 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ALLOWED_ORIGINS = ENV.get_value('BF_CORS_ALLOWED_ORIGINS', cast=list)
 
 ROOT_URLCONF = 'core.urls'
 
@@ -228,6 +232,9 @@ STRIPE_ENDPOINT_SECRET = ENV.get_value('STRIPE_ENDPOINT_SECRET')
 
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'api.exception_handlers.api_exception_handler',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
     ),
