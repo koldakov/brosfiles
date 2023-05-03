@@ -24,7 +24,7 @@ class SignInSerializer(TokenObtainPairSerializer):
         return data
 
 
-class SignUpSerializer(UserSerializer):
+class SignUpSerializer(serializers.ModelSerializer):
     username = serializers.CharField(
         max_length=64,
         min_length=3,
@@ -57,6 +57,7 @@ class SignUpSerializer(UserSerializer):
             'username', 'password', 'email',
             'first_name', 'last_name', 'is_active',
         ]
+        read_only_fields = ['is_active']
 
     def create(self, validated_data):
         try:
