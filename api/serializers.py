@@ -22,14 +22,9 @@ class SignInSerializer(TokenObtainPairSerializer):
 
     def validate(self, attrs):
         data = super().validate(attrs)
-        token = self.get_token(self.user)
 
         data['user'] = UserSerializer(self.user).data
-        data['refresh'] = str(token)
-        data['access'] = str(token.access_token)
 
-        if api_settings.UPDATE_LAST_LOGIN:
-            update_last_login(None, self.user)
 
         return data
 
