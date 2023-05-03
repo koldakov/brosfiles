@@ -22,10 +22,7 @@ class SignInSerializer(TokenObtainPairSerializer):
 
     def validate(self, attrs):
         data = super().validate(attrs)
-
         data['user'] = UserSerializer(self.user).data
-
-
         return data
 
 
