@@ -239,3 +239,6 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
     ),
 }
+
+# Features
+ENABLE_API = False
