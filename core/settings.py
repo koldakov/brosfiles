@@ -78,6 +78,7 @@ INSTALLED_APPS = [
     'base',
     'docs',
     'payments',
+    "crypto",
 ]
 
 MIDDLEWARE = [
