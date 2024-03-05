@@ -231,6 +231,22 @@ class SignUpForm(UserCreationForm):
 
         return username
 
+    def clean(self) -> dict:
+        cleaned_data: dict = super().clean()
+        first_name: str = cleaned_data['first_name']
+        last_name: str = cleaned_data['last_name']
+
+        if first_name == last_name:
+            raise ValidationError(
+                {
+                    "first_name": _("I've noticed a weired activity, "
+                                    "that users sign up with the same first name as a last name. "
+                                    "Now it's restricted in case these are bots.")
+                }
+            ) from None
+
+        return cleaned_data
+
     def save(self, commit=True):
         user = super(SignUpForm, self).save(commit=False)
 
