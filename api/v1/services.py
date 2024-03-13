@@ -22,7 +22,7 @@ class StripeWebhookService:
             # It can be in case payment was declined or something similar.
             # For now, it's not important, subscription not created locally, because payment is no successful.
             # I have no time to implement proper webhook handler.
-            # TODO: https://github.com/AivGitHub/brosfiles/issues/4 task for webhook handler.
+            # TODO: https://github.com/koldakov/brosfiles/issues/4 task for webhook handler.
             #  I would appreciate any help in this.
             raise FeatureNotReady()
 
